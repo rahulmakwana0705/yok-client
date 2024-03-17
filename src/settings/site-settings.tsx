@@ -25,7 +25,7 @@ import { SneakerIcon } from "@components/icons/sneaker-icon";
 
 export const siteSettings = {
   name: "YOK",
-  description: "",
+  description: "YOK",
   author: {
     name: "REDQ",
     websiteUrl: "https://redq.io",
@@ -1095,6 +1095,21 @@ export const siteSettings = {
           },
           {
             id: 2,
+            path: "/b2b",
+            label: "B2B",
+          },
+          {
+            id: 2,
+            path: "/custom-product ",
+            label: "Custom ",
+          },
+          {
+            id: 2,
+            path: "/combo-product",
+            label: "Combo",
+          },
+          {
+            id: 2,
             path: "/faq",
             label: "menu-faq",
           },
@@ -1132,6 +1147,11 @@ export const siteSettings = {
             id: 9,
             path: "/order",
             label: "menu-order",
+          },
+          {
+            id: 9,
+            path: "/hiring",
+            label: "Hiring",
           },
           {
             id: 10,
