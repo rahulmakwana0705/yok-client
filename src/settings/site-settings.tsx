@@ -34,7 +34,7 @@ export const siteSettings = {
   },
   logo: {
     url: "/assets/images/logo.png",
-    alt: "ChawkBazar",
+    alt: "YOK",
     href: "/",
     width: 95,
     height: 30,
