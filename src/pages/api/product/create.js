@@ -3,8 +3,8 @@ import multer from 'multer';
 
 // Configure AWS SDK with your credentials and desired region
 const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.NEXT_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.NEXT_AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
 });
 
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
                 const uploadSingleImage = async () => {
                     if (!imageFile) return null;
                     const params = {
-                        Bucket: process.env.AWS_BUCKET_NAME,
+                        Bucket: process.env.NEXT_AWS_BUCKET_NAME,
                         Key: `${Date.now().toString()}-${imageFile.originalname}`, // Generate a unique file name using timestamp and original name
                         Body: imageFile.buffer,
                         ContentType: imageFile.mimetype,
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
                     return Promise.all(
                         req.files['gallery'].map(async (file) => {
                             const params = {
-                                Bucket: process.env.AWS_BUCKET_NAME,
+                                Bucket: process.env.NEXT_AWS_BUCKET_NAME,
                                 Key: `${Date.now().toString()}-${file.originalname}`, // Generate a unique file name using timestamp and original name
                                 Body: file.buffer,
                                 ContentType: file.mimetype,
