@@ -25,8 +25,7 @@ import { SneakerIcon } from "@components/icons/sneaker-icon";
 
 export const siteSettings = {
   name: "YOK",
-  description:
-    "Fastest E-commerce template built with React, NextJS, TypeScript, @tanstack/react-query and Tailwind CSS.",
+  description: "",
   author: {
     name: "REDQ",
     websiteUrl: "https://redq.io",
