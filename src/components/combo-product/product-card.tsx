@@ -66,7 +66,7 @@ const ProductCard: FC<ProductProps> = ({
   });
   function handlePopupView() {
     setModalData({ data: product });
-    setModalView("PRODUCT_VIEW");
+    setModalView("PRODUCT_VIEW_COMBO");
     return openModal();
   }
 

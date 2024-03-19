@@ -55,7 +55,7 @@ export default function ProductPopup() {
 
   function navigateToProductPage() {
     closeModal();
-    router.push(`${ROUTES.PRODUCT}/${slug}`, undefined, {
+    router.push(`/custom-product/${slug}`, undefined, {
       locale: router.locale,
     });
   }

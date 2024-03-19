@@ -1,20 +1,21 @@
-import Container from '@components/ui/container';
-import Layout from '@components/layout/layout';
-import Subscription from '@components/common/subscription';
-import ShopDiscount from '@components/shop/discount';
-import { ShopFilters } from '@components/shop/filters';
-import StickyBox from 'react-sticky-box';
-import { ProductGrid } from '@components/product/product-grid';
-import SearchTopBar from '@components/shop/top-bar';
-import ActiveLink from '@components/ui/active-link';
-import { BreadcrumbItems } from '@components/common/breadcrumb';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { ROUTES } from '@utils/routes';
-import { GetStaticProps } from 'next';
+import Container from "@components/ui/container";
+import Layout from "@components/layout/layout";
+import Subscription from "@components/common/subscription";
+import ShopDiscount from "@components/shop/discount";
+import { ShopFilters } from "@components/shop/filters";
+import StickyBox from "react-sticky-box";
+// import { ProductGrid } from "@components/combo-product/product-grid";
+import { ProductGrid } from "@components/combo-product/product-grid";
+import SearchTopBar from "@components/shop/top-bar";
+import ActiveLink from "@components/ui/active-link";
+import { BreadcrumbItems } from "@components/common/breadcrumb";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { ROUTES } from "@utils/routes";
+import { GetStaticProps } from "next";
 
 export default function Products() {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
   return (
     <>
       <ShopDiscount />
@@ -25,16 +26,16 @@ export default function Products() {
               <div className="pb-7">
                 <BreadcrumbItems separator="/">
                   <ActiveLink
-                    href={'/'}
+                    href={"/"}
                     activeClassName="font-semibold text-heading"
                   >
-                    <a>{t('breadcrumb-home')}</a>
+                    <a>{t("breadcrumb-home")}</a>
                   </ActiveLink>
                   <ActiveLink
                     href={ROUTES.PRODUCT}
                     activeClassName="font-semibold text-heading"
                   >
-                    <a className="capitalize">{t('breadcrumb-products')}</a>
+                    <a className="capitalize">{t("breadcrumb-products")}</a>
                   </ActiveLink>
                 </BreadcrumbItems>
               </div>
@@ -59,10 +60,10 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
       ...(await serverSideTranslations(locale!, [
-        'common',
-        'forms',
-        'menu',
-        'footer',
+        "common",
+        "forms",
+        "menu",
+        "footer",
       ])),
     },
   };

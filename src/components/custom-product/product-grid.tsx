@@ -1,4 +1,4 @@
-import ProductCard from "@components/product/product-card";
+import ProductCard from "@components/custom-product/product-card";
 import Button from "@components/ui/button";
 import type { FC } from "react";
 import { useProductsQuery } from "@framework/product/get-all-products";

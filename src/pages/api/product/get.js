@@ -15,7 +15,7 @@ export default async function handler(req, res) {
             // Fetch products from the database based on the query
             const products = await Product.find(query);
 
-            res.status(200).json({ products });
+            res.status(200).json(products);
         } catch (error) {
             console.error('Error fetching products:', error);
             res.status(500).json({ error: 'Internal Server Error' });

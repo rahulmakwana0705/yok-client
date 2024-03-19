@@ -370,28 +370,72 @@ export default function ProductPage() {
             <div className="pb-3 border-b border-gray-300 flex">
               {Object.keys(variations).map((variation) => {
                 return (
-                  <ProductAttributes
-                    className="mr-10"
-                    key={variation}
-                    title={variation}
-                    attributes={variations[variation]}
-                    active={attributes[variation]}
-                    onClick={handleAttribute}
-                  />
+                  <div key={variation} className="mr-10">
+                    <h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+                      {variation}
+                    </h3>
+                    <ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+                      {variations[variation]?.map(({ id, value, meta }) => (
+                        <li
+                          key={`${value}-${id}`}
+                          className={cn(
+                            "cursor-pointer rounded border  w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+                            value === attributes[variation]
+                              ? "border-black"
+                              : "border-gray-100"
+                          )}
+                          onClick={() =>
+                            handleAttribute({ [variation]: value })
+                          }
+                        >
+                          {variation === "color" ? (
+                            <span
+                              className="block w-full h-full rounded"
+                              style={{ backgroundColor: meta }}
+                            />
+                          ) : (
+                            value
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 );
               })}
             </div>
             <div className="pb-3 border-b border-gray-300 flex">
               {Object.keys(variations).map((variation) => {
                 return (
-                  <ProductAttributes
-                    className="mr-10"
-                    key={variation}
-                    title={variation}
-                    attributes={variations[variation]}
-                    active={attributes[variation]}
-                    onClick={handleAttribute}
-                  />
+                  <div key={variation} className="mr-10">
+                    <h3 className="text-base md:text-lg text-heading font-semibold mb-2.5 capitalize">
+                      {variation}
+                    </h3>
+                    <ul className="flex flex-wrap colors ltr:-mr-3 rtl:-ml-3">
+                      {variations[variation]?.map(({ id, value, meta }) => (
+                        <li
+                          key={`${value}-${id}`}
+                          className={cn(
+                            "cursor-pointer rounded border  w-9 md:w-11 h-9 md:h-11 p-1 mb-2 md:mb-3 ltr:mr-2 rtl:ml-2 ltr:md:mr-3 rtl:md:ml-3 flex justify-center items-center text-heading text-xs md:text-sm uppercase font-semibold transition duration-200 ease-in-out hover:border-black",
+                            value === attributes[variation]
+                              ? "border-black"
+                              : "border-gray-100"
+                          )}
+                          onClick={() =>
+                            handleAttribute({ [variation]: value })
+                          }
+                        >
+                          {variation === "color" ? (
+                            <span
+                              className="block w-full h-full rounded"
+                              style={{ backgroundColor: meta }}
+                            />
+                          ) : (
+                            value
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 );
               })}
             </div>
