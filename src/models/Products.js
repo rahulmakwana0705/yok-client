@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 let Product;
 
 try {
-    // delete mongoose.connection.models['Product'];
+    delete mongoose.connection.models['Product'];
     Product = mongoose.model('Product');
 } catch (error) {
     const ProductSchema = new mongoose.Schema(
@@ -12,7 +12,7 @@ try {
             name: { type: String, required: true },
             sku: { type: String, default: "N/A" },
             description: { type: String, required: true },
-            slug: { type: String, required: true },
+            slug: { type: String },
             isNewArrival: { type: Boolean, default: false },
             customizable: { type: Boolean, default: false },
             tags: [

@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import multer from 'multer';
+import Product from '../../../models/Products';
 
-// Configure AWS SDK with your credentials and desired region
 const s3 = new AWS.S3({
     accessKeyId: process.env.NEXT_AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.NEXT_AWS_SECRET_ACCESS_KEY,
@@ -13,7 +13,7 @@ const upload = multer();
 
 export const config = {
     api: {
-        bodyParser: false, // Disables automatic parsing of the request body as JSON
+        bodyParser: false,
     },
 };
 
@@ -28,18 +28,19 @@ export default async function handler(req, res) {
                 }
 
                 // Access form data
-                const { name, description } = req.body;
+                const { name, description, sku, price, sale_price, quantity, category, tags, variations, meta, gender, customizable } = req.body;
                 const imageFile = req.files['image'] ? req.files['image'][0] : null; // Access the single image file
+                const galleryFiles = req.files['gallery'] || []; // Access the gallery image files
 
                 // Upload single image to S3
                 const uploadSingleImage = async () => {
                     if (!imageFile) return null;
                     const params = {
                         Bucket: process.env.NEXT_AWS_BUCKET_NAME,
-                        Key: `${Date.now().toString()}-${imageFile.originalname}`, // Generate a unique file name using timestamp and original name
+                        Key: `${Date.now().toString()}-${imageFile.originalname}`,
                         Body: imageFile.buffer,
                         ContentType: imageFile.mimetype,
-                        ACL: 'public-read', // Set ACL to public-read if you want the uploaded files to be publicly accessible
+                        ACL: 'public-read',
                     };
 
                     try {
@@ -53,15 +54,14 @@ export default async function handler(req, res) {
 
                 // Upload gallery images to S3
                 const uploadGalleryImages = async () => {
-                    if (!req.files['gallery']) return [];
                     return Promise.all(
-                        req.files['gallery'].map(async (file) => {
+                        galleryFiles.map(async (file) => {
                             const params = {
                                 Bucket: process.env.NEXT_AWS_BUCKET_NAME,
-                                Key: `${Date.now().toString()}-${file.originalname}`, // Generate a unique file name using timestamp and original name
+                                Key: `${Date.now().toString()}-${file.originalname}`,
                                 Body: file.buffer,
                                 ContentType: file.mimetype,
-                                ACL: 'public-read', // Set ACL to public-read if you want the uploaded files to be publicly accessible
+                                ACL: 'public-read',
                             };
 
                             try {
@@ -78,10 +78,29 @@ export default async function handler(req, res) {
                 // Upload single image and gallery images concurrently
                 const [imageUrl, galleryImageUrls] = await Promise.all([uploadSingleImage(), uploadGalleryImages()]);
 
-                // Process form data as needed
+                // Create a new Product document
+                const product = new Product({
+                    name,
+                    description,
+                    sku,
+                    price,
+                    sale_price,
+                    quantity,
+                    category: JSON.parse(category),
+                    tags: tags ? JSON.parse(tags) : [],
+                    variations: variations ? JSON.parse(variations) : [],
+                    meta: meta ? JSON.parse(meta) : [],
+                    gender: gender ? JSON.parse(gender) : [],
+                    customizable: customizable ? JSON.parse(customizable) : false,
+                    image: { original: imageUrl, thumbnail: imageUrl, id: 1 },
+                    gallery: galleryImageUrls.map((url, index) => ({ original: url, thumbnail: url, id: index + 1 })),
+                });
+
+                // Save the product to the database
+                await product.save();
 
                 // Send response with image URLs
-                res.status(200).json({ message: 'Form submitted successfully.', imageUrl, galleryImageUrls });
+                res.status(200).json({ success: true, message: 'Product Created Successfully.', product });
             });
         } catch (error) {
             console.error('Error processing form data:', error);
