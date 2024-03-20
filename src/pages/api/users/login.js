@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
         try {
-            const { email, password } = req.body;
+            const { email, password, remember_me } = req.body;
 
             // Check for required fields
             if (!email || !password) {

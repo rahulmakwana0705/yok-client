@@ -1439,7 +1439,7 @@ export const contemporaryBanner3 = {
   title: 'Winter Collection of Kid Items',
   slug: 'winter-collection',
   image: {
-    mobile: {
+    mobile: { 
       url: '/assets/images/banner/banner-mobile-13.jpg',
       width: 900,
       height: 480,
