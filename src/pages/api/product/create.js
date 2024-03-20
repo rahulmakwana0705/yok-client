@@ -1,12 +1,13 @@
 import AWS from 'aws-sdk';
 import multer from 'multer';
 import Product from '../../../models/Products';
+import s3 from '../../../lib/aws-config'
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.NEXT_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.NEXT_AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
-});
+// const s3 = new AWS.S3({
+//     accessKeyId: process.env.NEXT_AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.NEXT_AWS_SECRET_ACCESS_KEY,
+//     region: process.env.AWS_REGION,
+// });
 
 // Configure multer to handle file uploads
 const upload = multer();
@@ -28,9 +29,9 @@ export default async function handler(req, res) {
                 }
 
                 // Access form data
-                const { name, description, sku, price, sale_price, quantity, category, tags, variations, meta, gender, customizable } = req.body;
-                const imageFile = req.files['image'] ? req.files['image'][0] : null; // Access the single image file
-                const galleryFiles = req.files['gallery'] || []; // Access the gallery image files
+                const { name, description, sku, price, sale_price, type, quantity, category, tags, variations, meta, gender, customizable } = req.body;
+                const imageFile = req.files['image'] ? req.files['image'][0] : null;
+                const galleryFiles = req.files['gallery'] || [];
 
                 // Upload single image to S3
                 const uploadSingleImage = async () => {
@@ -86,6 +87,7 @@ export default async function handler(req, res) {
                     price,
                     sale_price,
                     quantity,
+                    type,
                     category: JSON.parse(category),
                     tags: tags ? JSON.parse(tags) : [],
                     variations: variations ? JSON.parse(variations) : [],

@@ -13,6 +13,7 @@ try {
             sku: { type: String, default: "N/A" },
             description: { type: String, required: true },
             slug: { type: String },
+            type: { type: String },
             isNewArrival: { type: Boolean, default: false },
             customizable: { type: Boolean, default: false },
             tags: [
