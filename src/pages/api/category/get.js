@@ -14,7 +14,7 @@ async function handler(req, res) {
             res.status(200).json({ data });
         } catch (error) {
             console.error('Error fetching Category:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            res.status(500).json({ error: 'Internal Server Error   errorr rr' });
         }
     } else {
         res.status(405).json({ error: 'Method Not Allowed' });
