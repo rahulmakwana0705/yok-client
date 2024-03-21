@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.NEXT_MONGODB_URI;
 
-console.log("log at mongo.js mongo", process.env.NEXT_MONGODB_URI);
+console.log("log at mongo.js mongo api end point", process.env.NEXT_PUBLIC_REST_API_ENDPOINT);
 
 if (!MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
