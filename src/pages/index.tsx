@@ -35,7 +35,10 @@ import dynamic from "next/dynamic";
 const DownloadApps = dynamic(() => import("@components/common/download-apps"));
 
 export default function Home() {
-  console.log("log at index.js mongo api end poin", process.env.NEXT_PUBLIC_REST_API_ENDPOINT);
+  console.log(
+    "log at index.js mongo url end poin ****",
+    process.env.NEXT_MONGODB_URI
+  );
   return (
     <>
       <HeroSlider
