@@ -8,6 +8,9 @@ const withPWA = require("next-pwa")({
 
 module.exports = withPWA({
   i18n,
+  images: {
+    domains: ['myawsproductsbucket.s3.ap-south-1.amazonaws.com', 'myawsproductsbucket.s3.amazonaws.com'],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

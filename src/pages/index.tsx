@@ -20,7 +20,7 @@ import CollectionBlock from "@containers/collection-block";
 import TestimonialCarousel from "@containers/testimonial-carousel";
 // All data file
 import { bannerDataContemporary } from "@framework/static/banner";
-import { homeContemporaryHeroSlider as banners } from "@framework/static/banner";
+// import { homeContemporaryHeroSlider as banners } from "@framework/static/banner";
 import SaleBannerGrid from "@containers/sale-banner-grid";
 import TrendingProductFeedWithTabs from "@components/product/feeds/trending-product-feed-with-tabs";
 import Subscription from "@components/common/subscription";
@@ -34,7 +34,9 @@ import BrandTimerBlock from "@containers/brand-timer-block";
 import dynamic from "next/dynamic";
 const DownloadApps = dynamic(() => import("@components/common/download-apps"));
 
-export default function Home() {
+export default function Home({ banners, bannerDataContemporary }) {
+  console.log(contemporaryBanner1)
+  console.log("banners")
   return (
     <>
       <HeroSlider
@@ -64,7 +66,7 @@ export default function Home() {
           sectionHeading="text-featured-products"
         />
         <BannerCard
-          key={`banner--key${banner.id}`}
+          key={`banner--key${banner._id}`}
           banner={contemporaryBanner1}
           href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
           className="mb-12 md:mb-14 xl:mb-16 pb-0.5 md:pb-0 lg:pb-1 xl:pb-0 md:-mt-2.5"
@@ -103,33 +105,69 @@ Home.Layout = Layout;
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.FLASH_SALE_PRODUCTS, { limit: 10 }],
-    queryFn: fetchFlashSaleProducts,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.CATEGORIES, { limit: 10 }],
-    queryFn: fetchCategories,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.NEW_ARRIVAL_PRODUCTS, { limit: 10 }],
-    queryFn: fetchNewArrivalProducts,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.BRANDS, { limit: 0 }],
-    queryFn: fetchBrands,
-  });
+  try {
+    // Fetch banner data from the API endpoint
+    const res = await fetch('http://localhost:3000/api/banner/get');
+    if (!res.ok) {
+      throw new Error('Failed to fetch banner data');
+    }
+    const data = await res.json();
+    const firstPositionData = data.Banners.filter(item => item.position === 'first');
+    const secondPositionData = data.Banners.filter(item => item.position === 'second');
+    const thirdPositionData = data.Banners.filter(item => item.position === 'third');
 
-  return {
-    props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-      ...(await serverSideTranslations(locale!, [
-        "common",
-        "forms",
-        "menu",
-        "footer",
-      ])),
-    },
-    revalidate: 60,
-  };
+    const banners = firstPositionData
+    const bannerDataContemporary = secondPositionData
+    const contemporaryBanner1 = thirdPositionData
+
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.FLASH_SALE_PRODUCTS, { limit: 10 }],
+      queryFn: fetchFlashSaleProducts,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.CATEGORIES, { limit: 10 }],
+      queryFn: fetchCategories,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.NEW_ARRIVAL_PRODUCTS, { limit: 10 }],
+      queryFn: fetchNewArrivalProducts,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.BRANDS, { limit: 0 }],
+      queryFn: fetchBrands,
+    });
+
+
+    return {
+      props: {
+        banners,
+        contemporaryBanner1,
+        bannerDataContemporary,
+        dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+        ...(await serverSideTranslations(locale!, [
+          "common",
+          "forms",
+          "menu",
+          "footer",
+        ])),
+      },
+      revalidate: 60,
+    };
+  } catch (error) {
+    console.error('Error fetching banner data:', error);
+    return {
+      props: {
+        banners: [],
+        dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+        ...(await serverSideTranslations(locale!, [
+          "common",
+          "forms",
+          "menu",
+          "footer",
+        ])),
+      },
+      revalidate: 60,
+    };
+  }
 };
+

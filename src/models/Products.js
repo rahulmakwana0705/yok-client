@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 let Product;
 
 try {
-    delete mongoose.connection.models['Product'];
+    // delete mongoose.connection.models['Product'];
     Product = mongoose.model('Product');
 } catch (error) {
     const ProductSchema = new mongoose.Schema(
