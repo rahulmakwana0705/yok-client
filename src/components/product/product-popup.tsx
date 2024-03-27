@@ -11,9 +11,16 @@ import { generateCartItem } from "@utils/generate-cart-item";
 import usePrice from "@framework/product/use-price";
 import { getVariations } from "@framework/utils/get-variations";
 import { useTranslation } from "next-i18next";
+import Cookies from "js-cookie";
+import jwt from "jsonwebtoken";
 
 export default function ProductPopup() {
   const { t } = useTranslation("common");
+
+  const authToken = Cookies.get("token");
+  const userData = JSON.parse(authToken);
+  console.log("userData", userData);
+
   const {
     modalData: { data },
     closeModal,
@@ -32,6 +39,7 @@ export default function ProductPopup() {
   });
   const variations = getVariations(data.variations);
   const { slug, image, name, description } = data;
+  console.log("data cart", data);
 
   const isSelected = !isEmpty(variations)
     ? !isEmpty(attributes) &&
@@ -51,6 +59,34 @@ export default function ProductPopup() {
     const item = generateCartItem(data!, attributes);
     addItemToCart(item, quantity);
     console.log(item, "item");
+
+    console.log(item.attributes, "item");
+    console.log(item.attributes.color, "item");
+    console.log(item.attributes.size, "item");
+
+    // fetch("add-to-cart/create", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     userId: userData._id
+    //     product: item.productId,
+    //     quantity,
+    //     size: item.attributes.size,
+    //     color: item.attributes.color,
+    //   }),
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Failed to add item to cart");
+    //     }
+    //     // setAddToCartLoader(false);
+    //     // setViewCartBtn(true);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error adding item to cart:", error);
+    //   });
   }
 
   function navigateToProductPage() {

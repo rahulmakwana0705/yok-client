@@ -24,6 +24,7 @@ export const useLoginMutation = () => {
       console.log("data login", data);
 
       Cookies.set("auth_token", data.data.token);
+      Cookies.set("token", JSON.stringify(data.data.user));
       authorize();
       closeModal();
     },
