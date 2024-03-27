@@ -14,11 +14,17 @@ interface BannerProps {
   href: LinkProps['href'];
   disableBorderRadius?: boolean;
 }
-
+let num = 0
 function getImage(deviceWidth: number, imgObj: any) {
-  console.log(imgObj)
-  console.log("imgObj")
-  return deviceWidth < 480 ? imgObj.mobile : imgObj.desktop;
+  num++
+  try {
+    console.log(imgObj)
+    console.log(num)
+    return deviceWidth < 480 ? imgObj.mobile : imgObj.desktop;
+  } catch (error) {
+    console.log(num)
+    console.log(error)
+  }
 }
 
 export default function BannerCard({
@@ -31,7 +37,12 @@ export default function BannerCard({
   disableBorderRadius = false,
 }: BannerProps) {
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
+  console.log("banner")
+  console.log(banner)
+  console.log("banner")
   const { title, image } = banner;
+  console.log(image)
+  console.log("image")
   const selectedImage = getImage(width, image);
   return (
     <div className={cn('mx-auto', className)}>

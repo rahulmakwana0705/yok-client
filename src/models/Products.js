@@ -46,7 +46,7 @@ try {
             variations: [
                 {
                     id: { type: Number },
-                    value: { type: String },
+                    value: { type: mongoose.Schema.Types.Mixed },
                     attribute: {
                         id: { type: Number },
                         name: { type: String },

@@ -29,7 +29,10 @@ export default async function handler(req, res) {
                 }
 
                 // Access form data
-                const { name, description, sku, price, sale_price, type, quantity, category, tags, variations, meta, gender, customizable } = req.body;
+                const { name, description, sku, price, sale_price, type, quantity, category, tags, meta, variations, gender, customizable } = req.body;
+                const variationsArray = JSON.parse(req.body.variations);
+                console.log(variationsArray)
+
                 const imageFile = req.files['image'] ? req.files['image'][0] : null;
                 const galleryFiles = req.files['gallery'] || [];
 
@@ -79,6 +82,7 @@ export default async function handler(req, res) {
                 // Upload single image and gallery images concurrently
                 const [imageUrl, galleryImageUrls] = await Promise.all([uploadSingleImage(), uploadGalleryImages()]);
 
+                console.log(variations)
                 // Create a new Product document
                 const product = new Product({
                     name,
@@ -90,7 +94,15 @@ export default async function handler(req, res) {
                     type,
                     category: JSON.parse(category),
                     tags: tags ? JSON.parse(tags) : [],
-                    variations: variations ? JSON.parse(variations) : [],
+                    variations: variationsArray.map((value, index) => ({
+                        id: index + 1,
+                        value: value.value,
+                        attribute: {
+                            id: 1,
+                            name: value.attribute.name === 'Color' ? 'Color' : 'Size',
+                            slug: value.attribute.slug === 'color' ? 'color' : 'size',
+                        }
+                    })),
                     meta: meta ? JSON.parse(meta) : [],
                     gender: gender ? JSON.parse(gender) : [],
                     customizable: customizable ? JSON.parse(customizable) : false,
@@ -98,6 +110,7 @@ export default async function handler(req, res) {
                     gallery: galleryImageUrls.map((url, index) => ({ original: url, thumbnail: url, id: index + 1 })),
                 });
 
+                console.log(product)
                 // Save the product to the database
                 await product.save();
 
@@ -105,8 +118,13 @@ export default async function handler(req, res) {
                 res.status(200).json({ success: true, message: 'Product Created Successfully.', product });
             });
         } catch (error) {
-            console.error('Error processing form data:', error);
-            res.status(500).json({ message: 'Internal server error.' });
+            if (error.name === 'MongoTimeoutError') {
+                console.error('MongoDB operation timed out:', error);
+                res.status(500).json({ message: 'Database operation timed out.' });
+            } else {
+                console.error('Error processing form data:', error);
+                res.status(500).json({ message: 'Internal server error.' });
+            }
         }
     } else {
         res.status(405).json({ message: 'Method not allowed.' });
