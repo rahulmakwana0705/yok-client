@@ -2,7 +2,8 @@ import { useUI } from "@contexts/ui.context";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import http from "@framework/utils/http";
 import Cookies from "js-cookie";
-import { useMutation } from "@tanstack/react-query";
+// import { useMutation } from "@tanstack/react-query";
+import { useMutation, DefaultError } from "@tanstack/react-query";
 
 export interface LoginInputType {
   email: string;
@@ -16,7 +17,9 @@ async function login(input: LoginInputType) {
   // };
 }
 
-export const useLoginMutation = () => {
+export const useLoginMutation = (
+  onErrorCallback: (error: DefaultError) => void
+) => {
   const { authorize, closeModal } = useUI();
   return useMutation({
     mutationFn: (input: LoginInputType) => login(input),
@@ -28,8 +31,9 @@ export const useLoginMutation = () => {
       authorize();
       closeModal();
     },
-    onError: (data) => {
-      console.log(data, "login error response");
+    onError: (error: DefaultError) => {
+      console.error("Login error:", error);
+      onErrorCallback(error);
     },
   });
 };
