@@ -64,29 +64,29 @@ export default function ProductPopup() {
     console.log(item.attributes.color, "item");
     console.log(item.attributes.size, "item");
 
-    // fetch("add-to-cart/create", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     userId: userData._id
-    //     product: item.productId,
-    //     quantity,
-    //     size: item.attributes.size,
-    //     color: item.attributes.color,
-    //   }),
-    // })
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Failed to add item to cart");
-    //     }
-    //     // setAddToCartLoader(false);
-    //     // setViewCartBtn(true);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error adding item to cart:", error);
-    //   });
+    fetch("api/add-to-cart/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userData?._id,
+        productId: data?._id,
+        quantity,
+        size: item?.attributes?.size,
+        color: item?.attributes?.color,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add item to cart");
+        }
+        // setAddToCartLoader(false);
+        // setViewCartBtn(true);
+      })
+      .catch((error) => {
+        console.error("Error adding item to cart:", error);
+      });
   }
 
   function navigateToProductPage() {

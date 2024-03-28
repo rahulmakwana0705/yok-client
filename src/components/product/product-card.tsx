@@ -57,7 +57,7 @@ const ProductCard: FC<ProductProps> = ({
   disableBorderRadius = false,
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
-  console.log("product", product);
+  // console.log("product", product);
   const placeholderImage = `/assets/placeholder/products/product-${variant}.svg`;
   const { price, basePrice, discount } = usePrice({
     amount: product.sale_price ? product.sale_price : product.price,
