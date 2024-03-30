@@ -1,10 +1,16 @@
 import connectToDatabase from '../../../lib/mongodb';
 import Product from '../../../models/Products';
+import jwt from 'jsonwebtoken';
+
 
 connectToDatabase();
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
+        const SECRET_KEY = process.env.SECRET_KEY;
+        const token = req.cookies.auth_token;
+        const decodedToken = jwt.verify(token, SECRET_KEY);
+        console.log('token in get prodct decodedToken', decodedToken)
         try {
             // Check if there's a query parameter 'customizable' and its value is 'true'
             const isCustomizable = req.query.customizable === 'true';
