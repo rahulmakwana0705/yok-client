@@ -64,6 +64,19 @@ export default function ProductPopup() {
     console.log(item.attributes.color, "item");
     console.log(item.attributes.size, "item");
 
+    // {
+    //     "id": "6.M.Orange",
+    //     "name": "Armani Wide-Leg Trousers",
+    //     "slug": "armani-wide-leg-trousers",
+    //     "image": "/assets/images/products/p-16.png",
+    //     "price": 60,
+    //     "attributes": {
+    //         "size": "M",
+    //         "color": "Orange"
+    //     },
+    //     "quantity": 1,
+    //     "itemTotal": 60
+    // }
     fetch("api/add-to-cart/create", {
       method: "POST",
       headers: {
@@ -71,10 +84,17 @@ export default function ProductPopup() {
       },
       body: JSON.stringify({
         userId: userData?._id,
+        slug: data._id,
         productId: data?._id,
+        name: item.name,
+        image: item.image,
+        price: item.price,
         quantity,
-        size: item?.attributes?.size,
-        color: item?.attributes?.color,
+        attributes: {
+          size: item?.attributes?.size,
+          color: item?.attributes?.color,
+        },
+        itemTotal: quantity * item.price,
       }),
     })
       .then((response) => {
