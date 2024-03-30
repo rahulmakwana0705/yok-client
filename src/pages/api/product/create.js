@@ -29,7 +29,7 @@ export default async function handler(req, res) {
                 }
 
                 // Access form data
-                const { name, description, sku, price, sale_price, type, quantity, category, tags, meta, variations, gender, customizable } = req.body;
+                const { name, description, sku, price, sale_price, type, quantity, category, tags, meta, variations, gender } = req.body;
                 const variationsArray = JSON.parse(req.body.variations);
                 console.log(variationsArray)
 
@@ -105,7 +105,6 @@ export default async function handler(req, res) {
                     })),
                     meta: meta ? JSON.parse(meta) : [],
                     gender: gender ? JSON.parse(gender) : [],
-                    customizable: customizable ? JSON.parse(customizable) : false,
                     image: { original: imageUrl, thumbnail: imageUrl, id: 1 },
                     gallery: galleryImageUrls.map((url, index) => ({ original: url, thumbnail: url, id: index + 1 })),
                 });

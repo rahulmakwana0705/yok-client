@@ -35,8 +35,6 @@ import dynamic from "next/dynamic";
 const DownloadApps = dynamic(() => import("@components/common/download-apps"));
 
 export default function Home({ banners, bannerDataContemporary, contemporaryBanner1, contemporaryBanner2 }) {
-  console.log(contemporaryBanner1)
-  console.log("banners")
   return (
     <>
       <HeroSlider
@@ -116,16 +114,11 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       throw new Error('Failed to fetch banner data');
     }
     const data = await res.json();
-    console.log(data)
     const firstPositionData = data.Banners.filter(item => item.position === 'first');
     const secondPositionData = data.Banners.filter(item => item.position === 'second');
     const thirdPositionData = data.Banners.filter(item => item.position === 'third');
     const fourthPositionData = data.Banners.filter(item => item.position === 'fourth');
     const fifthPositionData = data.Banners.filter(item => item.position === 'fifth');
-
-    console.log("fourthPositionData")
-    console.log(fourthPositionData)
-    console.log("fourthPositionData")
     const banners = firstPositionData
     const bannerDataContemporary = secondPositionData
     const contemporaryBanner1 = thirdPositionData

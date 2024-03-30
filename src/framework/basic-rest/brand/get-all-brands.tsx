@@ -8,7 +8,7 @@ export const fetchBrands = async () => {
   return data;
 };
 const fetchAncientBrands = async () => {
-  const { data } = await http.get(API_ENDPOINTS.BRANDS_ANCIENT);
+  const { data } = await http.get(API_ENDPOINTS.CREATE_ORDER);
   return data;
 };
 

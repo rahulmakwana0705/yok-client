@@ -40,6 +40,7 @@
     "next-seo": "6.4.0",
     "overlayscrollbars": "2.4.4",
     "overlayscrollbars-react": "0.5.3",
+    "razorpay": "^2.9.2",
     "rc-drawer": "6.5.2",
     "react": "18.2.0",
     "react-content-loader": "6.2.1",
