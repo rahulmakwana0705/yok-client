@@ -34,11 +34,12 @@ const CheckoutForm: React.FC = () => {
   async function onSubmit(input: CheckoutInputType) {
     console.log(updateUser)
     console.log("Test payment button clicked!");
+    const { data: razorpayKeys } = await http.get(API_ENDPOINTS.CREATE_ORDER);
     const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {});
     console.log(data)
     if (data.success) {
       var options = {
-        "key": process.env.NEXT_RAZORPAY_KEY,
+        "key": razorpayKeys.keys.key,
         "amount": "50000",
         "currency": "INR",
         "name": "YOK",

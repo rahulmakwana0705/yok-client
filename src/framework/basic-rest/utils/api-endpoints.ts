@@ -36,4 +36,5 @@ export const API_ENDPOINTS = {
   ORDER: '/order.json',
   CREATE_ORDER: '/order/create',
   VERIFY_ORDER: '/order/verify',
+  GET_RAZORPAYKEYS: '/razorpay/getKeys',
 };

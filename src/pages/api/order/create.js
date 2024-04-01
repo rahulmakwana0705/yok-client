@@ -1,12 +1,14 @@
 import Order from '../../../models/Order';
-import { razorPay } from '../../../lib/razorPay-config';
 import connectToDatabase from '../../../lib/mongodb';
+import { getRazorpayInstance } from '../../../lib/razorPay-config';
+
 
 connectToDatabase();
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
+            const razorPay = await getRazorpayInstance();
             const options = {
                 amount: 50000,
                 // amount: Number(req.body.amount * 100),
