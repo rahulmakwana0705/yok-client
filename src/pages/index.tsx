@@ -34,7 +34,12 @@ import BrandTimerBlock from "@containers/brand-timer-block";
 import dynamic from "next/dynamic";
 const DownloadApps = dynamic(() => import("@components/common/download-apps"));
 
-export default function Home({ banners, bannerDataContemporary, contemporaryBanner1, contemporaryBanner2 }) {
+export default function Home({
+  banners,
+  bannerDataContemporary,
+  contemporaryBanner1,
+  contemporaryBanner2,
+}) {
   return (
     <>
       <HeroSlider
@@ -64,19 +69,26 @@ export default function Home({ banners, bannerDataContemporary, contemporaryBann
           variant="modern"
           sectionHeading="text-featured-products"
         />
-        {
-          contemporaryBanner1 &&
+        {contemporaryBanner1 && (
           <BannerCard
             key={`banner--key${banner._id}`}
-            banner={Array.isArray(contemporaryBanner1) ? contemporaryBanner1[0] : contemporaryBanner1}
+            banner={
+              Array.isArray(contemporaryBanner1)
+                ? contemporaryBanner1[0]
+                : contemporaryBanner1
+            }
             href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
             className="mb-12 md:mb-14 xl:mb-16 pb-0.5 md:pb-0 lg:pb-1 xl:pb-0 md:-mt-2.5"
           />
-        }
+        )}
         <TrendingProductFeedWithTabs />
         <BannerCard
           key={`banner--key1${banner._id}`}
-          banner={Array.isArray(contemporaryBanner2) ? contemporaryBanner2[0] : contemporaryBanner2}
+          banner={
+            Array.isArray(contemporaryBanner2)
+              ? contemporaryBanner2[0]
+              : contemporaryBanner2
+          }
           href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
           className="mb-12 md:mb-14 xl:mb-16 pb-0.5 md:pb-0 lg:pb-1 xl:pb-0 md:-mt-2.5"
         />
@@ -109,20 +121,32 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 
   try {
     // Fetch banner data from the API endpoint
-    const res = await fetch(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/banner/get`);
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/banner/get`
+    );
     if (!res.ok) {
-      throw new Error('Failed to fetch banner data');
+      throw new Error("Failed to fetch banner data");
     }
     const data = await res.json();
-    const firstPositionData = data.Banners.filter(item => item.position === 'first');
-    const secondPositionData = data.Banners.filter(item => item.position === 'second');
-    const thirdPositionData = data.Banners.filter(item => item.position === 'third');
-    const fourthPositionData = data.Banners.filter(item => item.position === 'fourth');
-    const fifthPositionData = data.Banners.filter(item => item.position === 'fifth');
-    const banners = firstPositionData
-    const bannerDataContemporary = secondPositionData
-    const contemporaryBanner1 = thirdPositionData
-    const contemporaryBanner2 = fourthPositionData
+    const firstPositionData = data.Banners.filter(
+      (item) => item.position === "first"
+    );
+    const secondPositionData = data.Banners.filter(
+      (item) => item.position === "second"
+    );
+    const thirdPositionData = data.Banners.filter(
+      (item) => item.position === "third"
+    );
+    const fourthPositionData = data.Banners.filter(
+      (item) => item.position === "fourth"
+    );
+    const fifthPositionData = data.Banners.filter(
+      (item) => item.position === "fifth"
+    );
+    const banners = firstPositionData;
+    const bannerDataContemporary = secondPositionData;
+    const contemporaryBanner1 = thirdPositionData;
+    const contemporaryBanner2 = fourthPositionData;
 
     await queryClient.prefetchQuery({
       queryKey: [API_ENDPOINTS.FLASH_SALE_PRODUCTS, { limit: 10 }],
@@ -141,7 +165,6 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       queryFn: fetchBrands,
     });
 
-
     return {
       props: {
         banners,
@@ -159,7 +182,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       revalidate: 60,
     };
   } catch (error) {
-    console.error('Error fetching banner data:', error);
+    console.error("Error fetching banner data:", error);
     return {
       props: {
         banners: [],
@@ -175,4 +198,3 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     };
   }
 };
-

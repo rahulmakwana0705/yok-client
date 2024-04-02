@@ -11,15 +11,34 @@ import Link from "@components/ui/link";
 import { ROUTES } from "@utils/routes";
 import cn from "classnames";
 import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Cart() {
   const { t } = useTranslation("common");
   const { closeCart } = useUI();
   const { items, total, isEmpty } = useCart();
+  // const [items, setItems] = useState(null);
+  // const [total, settotal] = useState(null);
+  // const [isEmpty, setIsEmpty] = useState(null);
   const { price: cartTotal } = usePrice({
     amount: total,
     currencyCode: "USD",
   });
+  // useEffect(() => {
+  //   const loadCartData = async () => {
+  //     try {
+  //       const response = await axios.get("/api/add-to-cart/get");
+  //       console.log("response cart", response);
+  //       setItems(response?.data?.cartItems);
+  //       settotal(response?.data?.cartItems.length);
+  //       setIsEmpty(false);
+  //     } catch (error) {
+  //       console.log("error on get cart", error);
+  //     }
+  //   };
+  //   loadCartData();
+  // }, []);
   console.log("items", items);
   return (
     <div className="flex flex-col justify-between w-full h-full">

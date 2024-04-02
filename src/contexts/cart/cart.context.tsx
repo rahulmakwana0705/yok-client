@@ -2,7 +2,6 @@ import React from "react";
 import { cartReducer, State, initialState } from "./cart.reducer";
 import { Item, getItem } from "./cart.utils";
 import { useLocalStorage } from "@utils/use-local-storage";
-import axios from "axios";
 interface CartProviderState extends State {
   addItemToCart: (item: Item, quantity: number) => void;
   removeItemFromCart: (id: Item["id"]) => void;
@@ -19,16 +18,8 @@ export const cartContext = React.createContext<CartProviderState | undefined>(
 
 cartContext.displayName = "CartContext";
 
-export const useCart = async () => {
+export const useCart = () => {
   const context = React.useContext(cartContext);
-
-  try {
-    const response = await axios.get("/api/add-to-cart/get");
-    console.log("response", response);
-  } catch (error) {
-    console.log("error on get cart", error);
-  }
-
   if (context === undefined) {
     throw new Error(`useCart must be used within a CartProvider`);
   }
@@ -45,9 +36,9 @@ export const CartProvider: React.FC = (props) => {
     JSON.parse(savedCart!)
   );
 
-  React.useEffect(() => {
-    saveCart(JSON.stringify(state));
-  }, [state, saveCart]);
+  // React.useEffect(() => {
+  //   saveCart(JSON.stringify(state));
+  // }, [state, saveCart]);
 
   const addItemToCart = (item: Item, quantity: number) =>
     dispatch({ type: "ADD_ITEM_WITH_QUANTITY", item, quantity });

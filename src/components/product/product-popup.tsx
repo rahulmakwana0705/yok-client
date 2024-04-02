@@ -59,7 +59,8 @@ export default function ProductPopup() {
     const item = generateCartItem(data!, attributes);
     addItemToCart(item, quantity);
     console.log(item, "item");
-
+    console.log(attributes, "attributes");
+    
     console.log(item.attributes, "item");
     console.log(item.attributes.color, "item");
     console.log(item.attributes.size, "item");
