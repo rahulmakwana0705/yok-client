@@ -11,9 +11,15 @@ import { generateCartItem } from "@utils/generate-cart-item";
 import usePrice from "@framework/product/use-price";
 import { getVariations } from "@framework/utils/get-variations";
 import { useTranslation } from "next-i18next";
+import Cookies from "js-cookie";
 
 export default function ProductPopup() {
   const { t } = useTranslation("common");
+
+  const authToken = Cookies.get("token");
+  const userData = JSON.parse(authToken);
+  console.log("userData", userData);
+
   const {
     modalData: { data },
     closeModal,
@@ -50,6 +56,58 @@ export default function ProductPopup() {
     }, 600);
     const item = generateCartItem(data!, attributes);
     addItemToCart(item, quantity);
+
+    console.log(item, "item");
+    console.log(attributes, "attributes");
+
+    console.log(item.attributes, "item");
+    console.log(item.attributes.color, "item");
+    console.log(item.attributes.size, "item");
+
+    // {
+    //     "id": "6.M.Orange",
+    //     "name": "Armani Wide-Leg Trousers",
+    //     "slug": "armani-wide-leg-trousers",
+    //     "image": "/assets/images/products/p-16.png",
+    //     "price": 60,
+    //     "attributes": {
+    //         "size": "M",
+    //         "color": "Orange"
+    //     },
+    //     "quantity": 1,
+    //     "itemTotal": 60
+    // }
+    fetch("api/add-to-cart/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userData?._id,
+        slug: data._id,
+        productId: data?._id,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity,
+        attributes: {
+          size: item?.attributes?.size,
+          color: item?.attributes?.color,
+        },
+        itemTotal: quantity * item.price,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add item to cart");
+        }
+        // setAddToCartLoader(false);
+        // setViewCartBtn(true);
+      })
+      .catch((error) => {
+        console.error("Error adding item to cart:", error);
+      });
+
     console.log(item, "item");
   }
 

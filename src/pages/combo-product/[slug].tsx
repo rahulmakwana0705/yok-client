@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@components/ui/container";
 import Layout from "@components/layout/layout";
 import Subscription from "@components/common/subscription";
@@ -27,6 +27,7 @@ import ProductMetaReview from "@components/product/product-meta-review";
 import { useSsrCompatible } from "@utils/use-ssr-compatible";
 
 import cn from "classnames";
+import axios from "axios";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -206,6 +207,7 @@ export default function ProductPage() {
   const [attributes, setAttributes] = useState<{ [key: string]: string }>({});
   const [quantity, setQuantity] = useState(1);
   const [addToCartLoader, setAddToCartLoader] = useState<boolean>(false);
+  const [data, setData] = useState(null);
   const { price, basePrice, discount } = usePrice(
     data && {
       amount: data.sale_price ? data.sale_price : data.price,
@@ -213,6 +215,25 @@ export default function ProductPage() {
       currencyCode: "USD",
     }
   );
+
+  useEffect(() => {
+    if (!slug) {
+      return; // Exit early if slug is not defined
+    }
+    const loadCartData = async () => {
+      try {
+        const response = await axios.post(`/api/product/get-single`, {
+          slug,
+        });
+        console.log("response product hahj", response);
+        setData(response?.data);
+      } catch (error) {
+        console.log("error on get cart", error);
+      }
+    };
+    loadCartData();
+  }, [slug]);
+
   if (isLoading) return <p>Loading...</p>;
   const variations = getVariations(data?.variations);
 
@@ -251,10 +272,7 @@ export default function ProductPage() {
       ...attribute,
     }));
   }
-
-  function handleImageUpload(files: any) {
-    console.log("Uploaded files:", files);
-  }
+  console.log("slug", slug);
 
   return (
     <>
