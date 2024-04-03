@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import Button from '@components/ui/button';
-import Counter from '@components/common/counter';
-import { useRouter } from 'next/router';
-import { useProductQuery } from '@framework/product/get-product';
-import { getVariations } from '@framework/utils/get-variations';
-import usePrice from '@framework/product/use-price';
-import { useCart } from '@contexts/cart/cart.context';
-import { generateCartItem } from '@utils/generate-cart-item';
-import { ProductAttributes } from './product-attributes';
-import isEmpty from 'lodash/isEmpty';
-import Link from '@components/ui/link';
-import { toast } from 'react-toastify';
-import { useWindowSize } from '@utils/use-window-size';
-import Carousel from '@components/ui/carousel/carousel';
-import { SwiperSlide } from 'swiper/react';
-import ProductMetaReview from '@components/product/product-meta-review';
-import { useSsrCompatible } from '@utils/use-ssr-compatible';
+import React, { useState } from "react";
+import Button from "@components/ui/button";
+import Counter from "@components/common/counter";
+import { useRouter } from "next/router";
+import { useProductQuery } from "@framework/product/get-product";
+import { getVariations } from "@framework/utils/get-variations";
+import usePrice from "@framework/product/use-price";
+import { useCart } from "@contexts/cart/cart.context";
+import { generateCartItem } from "@utils/generate-cart-item";
+import { ProductAttributes } from "./product-attributes";
+import isEmpty from "lodash/isEmpty";
+import Link from "@components/ui/link";
+import { toast } from "react-toastify";
+import { useWindowSize } from "@utils/use-window-size";
+import Carousel from "@components/ui/carousel/carousel";
+import { SwiperSlide } from "swiper/react";
+import ProductMetaReview from "@components/product/product-meta-review";
+import { useSsrCompatible } from "@utils/use-ssr-compatible";
 
 const productGalleryCarouselResponsive = {
-  '768': {
+  "768": {
     slidesPerView: 2,
   },
-  '0': {
+  "0": {
     slidesPerView: 1,
   },
 };
@@ -40,7 +40,7 @@ const ProductSingleDetails: React.FC = () => {
     data && {
       amount: data.sale_price ? data.sale_price : data.price,
       baseAmount: data.price,
-      currencyCode: 'USD',
+      currencyCode: "USD",
     }
   );
   if (isLoading) return <p>Loading...</p>;
@@ -63,16 +63,16 @@ const ProductSingleDetails: React.FC = () => {
 
     const item = generateCartItem(data!, attributes);
     addItemToCart(item, quantity);
-    toast('Added to the bag', {
-      progressClassName: 'fancy-progress-bar',
-      position: width > 768 ? 'bottom-right' : 'top-right',
+    toast("Added to the bag", {
+      progressClassName: "fancy-progress-bar",
+      position: width > 768 ? "bottom-right" : "top-right",
       autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
     });
-    console.log(item, 'item');
+    console.log(item, "item");
   }
 
   function handleAttribute(attribute: any) {
@@ -81,7 +81,7 @@ const ProductSingleDetails: React.FC = () => {
       ...attribute,
     }));
   }
-
+  console.log("daata", data);
   return (
     <div className="block lg:grid grid-cols-9 gap-x-10 xl:gap-x-14 pt-7 pb-10 lg:pb-14 2xl:pb-20 items-start">
       {width < 1025 ? (
@@ -99,7 +99,7 @@ const ProductSingleDetails: React.FC = () => {
                 <img
                   src={
                     item?.original ??
-                    '/assets/placeholder/products/product-gallery.svg'
+                    "/assets/placeholder/products/product-gallery.svg"
                   }
                   alt={`${data?.name}--${index}`}
                   className="object-cover w-full"
@@ -118,7 +118,7 @@ const ProductSingleDetails: React.FC = () => {
               <img
                 src={
                   item?.original ??
-                  '/assets/placeholder/products/product-gallery.svg'
+                  "/assets/placeholder/products/product-gallery.svg"
                 }
                 alt={`${data?.name}--${index}`}
                 className="object-cover w-full"
@@ -170,17 +170,17 @@ const ProductSingleDetails: React.FC = () => {
             }
             disableDecrement={quantity === 1}
           />
-          <Button
+          {/* <Button
             onClick={addToCart}
             variant="slim"
             className={`w-full md:w-6/12 xl:w-full ${
-              !isSelected && 'bg-gray-400 hover:bg-gray-400'
+              !isSelected && "bg-gray-400 hover:bg-gray-400"
             }`}
             disabled={!isSelected}
             loading={addToCartLoader}
           >
             <span className="py-2 3xl:px-8">Add to cart</span>
-          </Button>
+          </Button> */}
         </div>
         <div className="py-6">
           <ul className="text-sm space-y-5 pb-1">

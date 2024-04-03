@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@components/ui/container";
 import Layout from "@components/layout/layout";
 import Subscription from "@components/common/subscription";
@@ -28,6 +28,7 @@ import { useSsrCompatible } from "@utils/use-ssr-compatible";
 import { CheckBox } from "@components/ui/checkbox";
 
 import cn from "classnames";
+import axios from "axios";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -38,7 +39,7 @@ const productGalleryCarouselResponsive = {
   },
 };
 
-const data = {
+const dataa = {
   id: 1,
   sku: "N/A",
   name: "Maniac Red Boys",
@@ -201,6 +202,7 @@ export default function ProductPage() {
   const {
     query: { slug },
   } = useRouter();
+  const [data, setData] = useState(null);
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { isLoading } = useProductQuery(slug as string);
   const { addItemToCart } = useCart();
@@ -214,6 +216,23 @@ export default function ProductPage() {
   const [checkBoxValue, setCheckBoxValue] = useState<string>("");
 
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+
+  useEffect(() => {
+    const loadCartData = async () => {
+      try {
+        const response = await axios.post(`/api/product/get-single`, {
+          slug,
+        });
+        console.log("response product hahj", response);
+        setData(response?.data);
+      } catch (error) {
+        console.log("error on get cart", error);
+      }
+    };
+    if (slug) {
+      loadCartData();
+    }
+  }, [slug]);
 
   const handleImageUpload = (files) => {
     // console.log("Image selected:", files);

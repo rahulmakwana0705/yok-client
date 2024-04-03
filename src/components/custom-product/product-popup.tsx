@@ -31,7 +31,7 @@ export default function ProductPopup() {
     currencyCode: "USD",
   });
   const variations = getVariations(data.variations);
-  const { slug, image, name, description } = data;
+  const { slug, image, name, description, _id } = data;
 
   const isSelected = !isEmpty(variations)
     ? !isEmpty(attributes) &&
@@ -55,7 +55,7 @@ export default function ProductPopup() {
 
   function navigateToProductPage() {
     closeModal();
-    router.push(`/custom-product/${slug}`, undefined, {
+    router.push(`/custom-product/${_id}`, undefined, {
       locale: router.locale,
     });
   }
