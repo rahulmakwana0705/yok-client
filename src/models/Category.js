@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 let Category
 
 try {
+    delete mongoose.connection.models['Category'];
     Category = mongoose.model('Category');
 } catch (error) {
 
     const categorySchema = new mongoose.Schema({
-        id: { type: Number, required: true },
         name: { type: String, required: true },
         slug: { type: String, required: true },
-        productCount: { type: Number, required: true },
+        productCount: { type: Number, default: 0 },
         icon: { type: String, required: true },
         tags: [{ type: String, required: true }],
         image: {
