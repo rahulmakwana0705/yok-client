@@ -34,7 +34,7 @@ const CheckoutForm: React.FC = () => {
   async function onSubmit(input: CheckoutInputType) {
     console.log(updateUser)
     console.log("Test payment button clicked!");
-    const { data: razorpayKeys } = await http.get(API_ENDPOINTS.CREATE_ORDER);
+    const { data: razorpayKeys } = await http.get(API_ENDPOINTS.GET_RAZORPAYKEYS);
     const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {});
     console.log(data)
     if (data.success) {

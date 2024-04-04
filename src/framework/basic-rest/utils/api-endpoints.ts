@@ -37,4 +37,5 @@ export const API_ENDPOINTS = {
   CREATE_ORDER: '/order/create',
   VERIFY_ORDER: '/order/verify',
   GET_RAZORPAYKEYS: '/razorpay/getKeys',
+  GET_SUBCATEGORIES: '/sub-category/get',
 };

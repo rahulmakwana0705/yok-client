@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useState } from "react";
 import SearchIcon from "@components/icons/search-icon";
 import { siteSettings } from "@settings/site-settings";
 import HeaderMenu from "@components/layout/header/header-menu";
@@ -13,12 +14,16 @@ import WishButton from "@components/ui/wish-button";
 import { UserLineIcon } from "@components/icons/UserLineIcon";
 import Link from "@components/ui/link";
 import CategoryMenu from "@components/ui/category-menu";
+import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
+import http from '@framework/utils/http';
+
 const AuthMenu = dynamic(() => import("@components/layout/header/auth-menu"), {
   ssr: false,
 });
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
+
 
 type DivElementRef = React.MutableRefObject<HTMLDivElement>;
 const { site_header } = siteSettings;
@@ -41,6 +46,21 @@ export default function Header() {
     setDrawerView("MOBILE_MENU");
     return openSidebar();
   }
+  const [catogoriesData, SetCatogoriesData] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data: categoryData } = await http.get(API_ENDPOINTS.GET_SUBCATEGORIES);
+        console.log(categoryData.CategoryMenu)
+        SetCatogoriesData(categoryData.CategoryMenu);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   return (
     <header
       id="siteHeader"
@@ -131,7 +151,8 @@ export default function Header() {
               categoryMenu={site_header?.categoryMenu}
             />
             <HeaderMenu
-              data={site_header.menu}
+              data={catogoriesData}
+              // data={site_header.menu}
               className="hidden lg:flex ltr:pl-3.5 rtl:pr-3.5 ltr:xl:pl-5 rtl:xl:pr-5 "
             />
           </div>
