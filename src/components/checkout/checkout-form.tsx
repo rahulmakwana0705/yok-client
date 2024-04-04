@@ -7,8 +7,8 @@ import Button from "@components/ui/button";
 import Router from "next/router";
 import { ROUTES } from "@utils/routes";
 import { useTranslation } from "next-i18next";
-import http from '@framework/utils/http';
-import { API_ENDPOINTS } from '@framework/utils/api-endpoints';
+import http from "@framework/utils/http";
+import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 
 interface CheckoutInputType {
   firstName: string;
@@ -32,39 +32,42 @@ const CheckoutForm: React.FC = () => {
     formState: { errors },
   } = useForm<CheckoutInputType>();
   async function onSubmit(input: CheckoutInputType) {
-    console.log(updateUser)
+    console.log(updateUser);
     console.log("Test payment button clicked!");
-    const { data: razorpayKeys } = await http.get(API_ENDPOINTS.CREATE_ORDER);
+    const { data: razorpayKeys } = await http.get(
+      API_ENDPOINTS.GET_RAZORPAYKEYS
+    );
     const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {});
-    console.log(data)
+    console.log(data);
     if (data.success) {
       var options = {
-        "key": razorpayKeys.keys.key,
-        "amount": "50000",
-        "currency": "INR",
-        "name": "YOK",
-        "description": "Test Transaction",
-        "image": "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
-        "order_id": data.order.id,
-        "handler": function (response: any) {
-          console.log(response)
+        key: razorpayKeys.keys.key,
+        amount: "50000",
+        currency: "INR",
+        name: "YOK",
+        description: "Test Transaction",
+        image:
+          "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
+        order_id: data.order.id,
+        handler: function (response: any) {
+          console.log(response);
           updateUser({ ...input, response });
         },
-        "prefill": {
-          "name": "John doe",
-          "email": "johndoe@gmail.com",
-          "contact": "9999999999"
+        prefill: {
+          name: "John doe",
+          email: "johndoe@gmail.com",
+          contact: "9999999999",
         },
-        "notes": {
-          "test": "This is test function"
+        notes: {
+          test: "This is test function",
         },
-        "theme": {
-          "color": "#3399cc"
-        }
+        theme: {
+          color: "#3399cc",
+        },
       };
       var rzp1 = new window.Razorpay(options);
-      rzp1.open()
-      rzp1.on('payment.failed', function (response: any) {
+      rzp1.open();
+      rzp1.on("payment.failed", function (response: any) {
         alert(response.error.code);
         alert(response.error.description);
         alert(response.error.source);
@@ -74,19 +77,19 @@ const CheckoutForm: React.FC = () => {
         alert(response.error.metadata.payment_id);
       });
     }
-    console.log(input)
+    console.log(input);
     updateUser(input);
     // Router.push(ROUTES.ORDER);
   }
   function onPaymentSuccess(response: CheckoutInputType) {
-    console.log(response)
+    console.log(response);
     updateUser({ ...data, response });
     // Router.push(ROUTES.ORDER);
   }
   // New Function to Handle Test Payment
   const handleTestPayment = async (e: any) => {
-    e.preventDefault()
-    console.log(updateUser)
+    e.preventDefault();
+    console.log(updateUser);
   };
 
   return (
@@ -188,7 +191,11 @@ const CheckoutForm: React.FC = () => {
               {t("common:button-place-order")}
             </Button>
 
-            <Button onClick={(e) => { handleTestPayment(e) }}>
+            <Button
+              onClick={(e) => {
+                handleTestPayment(e);
+              }}
+            >
               Test
             </Button>
           </div>

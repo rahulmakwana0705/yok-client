@@ -101,8 +101,6 @@ export default function ProductPopup() {
         if (!response.ok) {
           throw new Error("Failed to add item to cart");
         }
-        // setAddToCartLoader(false);
-        // setViewCartBtn(true);
       })
       .catch((error) => {
         console.error("Error adding item to cart:", error);

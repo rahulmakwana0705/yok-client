@@ -17,6 +17,7 @@ import { SwiperSlide } from "swiper/react";
 import ProductMetaReview from "@components/product/product-meta-review";
 import { useSsrCompatible } from "@utils/use-ssr-compatible";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -27,10 +28,18 @@ const productGalleryCarouselResponsive = {
   },
 };
 
+var userData;
+const authToken = Cookies.get("token");
+if (authToken) {
+  userData = JSON.parse(authToken);
+  console.log("userData", userData);
+}
+
 const ProductSingleDetails: React.FC = () => {
   const {
     query: { slug },
   } = useRouter();
+
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { isLoading } = useProductQuery(slug as string);
   const { addItemToCart } = useCart();
@@ -76,7 +85,7 @@ const ProductSingleDetails: React.FC = () => {
 
   function addToCart() {
     if (!isSelected) return;
-    // to show btn feedback while product carting
+
     setAddToCartLoader(true);
     setTimeout(() => {
       setAddToCartLoader(false);
@@ -93,7 +102,38 @@ const ProductSingleDetails: React.FC = () => {
       pauseOnHover: true,
       draggable: true,
     });
-    console.log(item, "item");
+
+    console.log("item", item);
+    console.log("quantity", quantity);
+
+    fetch("http://localhost:3000/api/add-to-cart/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userData?._id,
+        slug: slug,
+        productId: data?._id,
+        name: item?.name,
+        image: item?.image,
+        price: item?.price,
+        quantity,
+        attributes: {
+          size: item?.attributes?.size,
+          color: item?.attributes?.color,
+        },
+        itemTotal: quantity * item.price,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add item to cart");
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding item to cart:", error);
+      });
   }
 
   function handleAttribute(attribute: any) {
@@ -102,6 +142,7 @@ const ProductSingleDetails: React.FC = () => {
       ...attribute,
     }));
   }
+
   console.log("daata", data);
   return (
     <div className="block lg:grid grid-cols-9 gap-x-10 xl:gap-x-14 pt-7 pb-10 lg:pb-14 2xl:pb-20 items-start">
