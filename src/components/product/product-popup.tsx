@@ -38,7 +38,7 @@ export default function ProductPopup() {
     currencyCode: "USD",
   });
   const variations = getVariations(data.variations);
-  const { slug, image, name, description } = data;
+  const { slug, image, name, description, _id } = data;
   console.log("data cart", data);
 
   const isSelected = !isEmpty(variations)
@@ -60,7 +60,7 @@ export default function ProductPopup() {
     addItemToCart(item, quantity);
     console.log(item, "item");
     console.log(attributes, "attributes");
-    
+
     console.log(item.attributes, "item");
     console.log(item.attributes.color, "item");
     console.log(item.attributes.size, "item");
@@ -112,7 +112,7 @@ export default function ProductPopup() {
 
   function navigateToProductPage() {
     closeModal();
-    router.push(`${ROUTES.PRODUCT}/${slug}`, undefined, {
+    router.push(`${ROUTES.PRODUCT}/${_id}`, undefined, {
       locale: router.locale,
     });
   }

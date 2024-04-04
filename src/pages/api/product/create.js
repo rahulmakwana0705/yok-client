@@ -27,7 +27,10 @@ export default async function handler(req, res) {
                 // Access form data
                 const { name, description, sku, price, sale_price, type, quantity, category, tags, meta, variations, gender } = req.body;
                 const variationsArray = JSON.parse(req.body.variations);
-                console.log(variationsArray)
+
+                const metaArray = JSON.parse(req.body.meta);
+
+                console.log('metaArray\n', metaArray)
 
                 const imageFile = req.files['image'] ? req.files['image'][0] : null;
                 const galleryFiles = req.files['gallery'] || [];

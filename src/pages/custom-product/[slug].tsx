@@ -29,6 +29,7 @@ import { CheckBox } from "@components/ui/checkbox";
 
 import cn from "classnames";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -198,6 +199,13 @@ const dataa = {
   ],
 };
 
+var userData;
+const authToken = Cookies.get("token");
+if (authToken) {
+  userData = JSON.parse(authToken);
+  console.log("userData", userData);
+}
+
 export default function ProductPage() {
   const {
     query: { slug },
@@ -283,6 +291,39 @@ export default function ProductPage() {
       pauseOnHover: true,
       draggable: true,
     });
+
+    console.log("item", item);
+    console.log("quantity", quantity);
+
+    fetch("http://localhost:3000/api/add-to-cart/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userData?._id,
+        slug: slug,
+        productId: data?._id,
+        name: item?.name,
+        image: item?.image,
+        price: item?.price,
+        quantity,
+        attributes: {
+          size: item?.attributes?.size,
+          color: item?.attributes?.color,
+        },
+        itemTotal: quantity * item.price,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add item to cart");
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding item to cart:", error);
+      });
+
     console.log(item, "item");
   }
 
