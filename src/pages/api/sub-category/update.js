@@ -9,13 +9,20 @@ connectToDatabase();
 
 async function handler(req, res) {
     await corsMiddleware(req, res, async () => {
-        if (req.method === 'POST') {
+        if (req.method === 'POST') { // Assuming you're using PUT for updating data
             try {
                 const { id, path, label, columns, _id } = req.body;
-                console.log(columns)
+                console.log(columns);
 
-                // Create a new category menu object
-                const newCategoryMenu = new CategoryMenu({
+                // Find the document based on the provided _id and id
+                const existingCategoryMenu = await CategoryMenu.findOne({ _id });
+
+                if (!existingCategoryMenu) {
+                    return res.status(404).json({ error: 'CategoryMenu not found' });
+                }
+
+                // Update the existing document
+                existingCategoryMenu.set({
                     id,
                     path,
                     label,
@@ -34,13 +41,13 @@ async function handler(req, res) {
                     }))
                 });
 
-                // Save the category menu to the database
-                const savedCategoryMenu = await newCategoryMenu.save();
+                // Save the updated document
+                const updatedCategoryMenu = await existingCategoryMenu.save();
 
-                res.status(200).json({ success: true, message: 'submenu Created Successfully.', savedCategoryMenu });
+                res.status(200).json({ success: true, message: 'Submenu updated successfully', updatedCategoryMenu });
 
             } catch (error) {
-                console.error('Error saving CategoryMenu:', error);
+                console.error('Error updating CategoryMenu:', error);
                 res.status(500).json({ error: 'Internal Server Error' });
             }
         } else {
