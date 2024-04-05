@@ -8,6 +8,22 @@ connectToDatabase();
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
+            const { paymentMethod, paymentStatus, products, shippingAddress, status, totalPrice, tracking_number, transactionId, user } = req.body;
+
+            const newOrder = new Order({
+                user,
+                products,
+                totalPrice,
+                tracking_number,
+                shippingAddress,
+                status,
+                paymentMethod,
+                paymentStatus,
+                transactionId
+            });
+
+            await newOrder.save();
+
             const razorPay = await getRazorpayInstance();
             const options = {
                 amount: 50000,
@@ -19,8 +35,8 @@ export default async function handler(req, res) {
             res.status(200).json({
                 success: true,
                 order,
+                newOrder
             });
-
 
         } catch (error) {
             console.error('Error creating order:', error);
