@@ -15,7 +15,7 @@ import { UserLineIcon } from "@components/icons/UserLineIcon";
 import Link from "@components/ui/link";
 import CategoryMenu from "@components/ui/category-menu";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
-import http from '@framework/utils/http';
+import http from "@framework/utils/http";
 
 const AuthMenu = dynamic(() => import("@components/layout/header/auth-menu"), {
   ssr: false,
@@ -23,7 +23,6 @@ const AuthMenu = dynamic(() => import("@components/layout/header/auth-menu"), {
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
-
 
 type DivElementRef = React.MutableRefObject<HTMLDivElement>;
 const { site_header } = siteSettings;
@@ -51,11 +50,13 @@ export default function Header() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data: categoryData } = await http.get(API_ENDPOINTS.GET_SUBCATEGORIES);
-        console.log(categoryData.CategoryMenu)
+        const { data: categoryData } = await http.get(
+          API_ENDPOINTS.GET_SUBCATEGORIES
+        );
+        console.log(categoryData.CategoryMenu);
         SetCatogoriesData(categoryData.CategoryMenu);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       }
     };
 
@@ -128,12 +129,12 @@ export default function Header() {
           </div>
           <div className="flex items-center justify-end flex-shrink-0">
             <div className="flex items-center transition-all wishlistShopping gap-x-7 lg:gap-x-6 xl:gap-x-8 2xl:gap-x-10 ltr:pl-3 rtl:pr-3">
-              <div className="flex md:gap-x-4 align-center ">
+              {/* <div className="flex md:gap-x-4 align-center ">
                 <WishButton />
                 <span className="hidden text-sm font-semibold transition-all duration-100 ease-in-out cursor-pointer lg:font-normal lg:block xl:text-base text-heading">
                   {t("menu:menu-wishlist")}
                 </span>
-              </div>
+              </div> */}
               <div className="hidden lg:flex md:gap-x-4 align-center">
                 <CartButton />
                 <span className="hidden text-sm font-semibold transition-all duration-100 ease-in-out cursor-pointer lg:font-normal lg:block xl:text-base text-heading">
