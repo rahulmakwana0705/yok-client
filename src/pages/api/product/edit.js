@@ -28,7 +28,12 @@ export default async function handler(req, res) {
                 const galleryFiles = req.files['gallery'] || [];
 
                 const uploadSingleImage = async () => {
-                    if (!imageFile) return null;
+                    if (!imageFile) return imageFile;
+
+                    if (imageFile.startsWith('http://') || imageFile.startsWith('https://')) {
+                        return imageFile;
+                    }
+
                     const params = {
                         Bucket: process.env.NEXT_AWS_BUCKET_NAME,
                         Key: `${Date.now().toString()}-${imageFile.originalname}`,
@@ -47,8 +52,12 @@ export default async function handler(req, res) {
                 };
 
                 const uploadGalleryImages = async () => {
+                    if (!galleryFiles) return galleryFiles;
                     return Promise.all(
                         galleryFiles.map(async (file) => {
+                            if (file.startsWith('http://') || file.startsWith('https://')) {
+                                return file; // If file is a URL, return it directly
+                            }
                             const params = {
                                 Bucket: process.env.NEXT_AWS_BUCKET_NAME,
                                 Key: `${Date.now().toString()}-${file.originalname}`,
@@ -69,7 +78,8 @@ export default async function handler(req, res) {
                 };
 
                 const [imageUrl, galleryImageUrls] = await Promise.all([uploadSingleImage(), uploadGalleryImages()]);
-
+                console.log('image ', imageUrl, galleryImageUrls);
+                console.log('productId', productId);
                 const product = await Product.findById(productId);
 
                 if (!product) {
