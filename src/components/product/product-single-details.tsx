@@ -18,6 +18,7 @@ import ProductMetaReview from "@components/product/product-meta-review";
 import { useSsrCompatible } from "@utils/use-ssr-compatible";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useUI } from "@contexts/ui.context";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -39,6 +40,8 @@ const ProductSingleDetails: React.FC = () => {
   const {
     query: { slug },
   } = useRouter();
+
+  const { openSearch, openModal, setModalView, isAuthorized } = useUI();
 
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { isLoading } = useProductQuery(slug as string);
@@ -85,6 +88,11 @@ const ProductSingleDetails: React.FC = () => {
 
   function addToCart() {
     if (!isSelected) return;
+
+    if (!userData) {
+      setModalView("LOGIN_VIEW");
+      return openModal();
+    }
 
     setAddToCartLoader(true);
     setTimeout(() => {

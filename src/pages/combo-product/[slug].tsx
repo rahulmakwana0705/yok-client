@@ -29,6 +29,7 @@ import { useSsrCompatible } from "@utils/use-ssr-compatible";
 import cn from "classnames";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useUI } from "@contexts/ui.context";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -209,6 +210,9 @@ export default function ProductPage() {
   const {
     query: { slug },
   } = useRouter();
+
+  const { openSearch, openModal, setModalView, isAuthorized } = useUI();
+
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { isLoading } = useProductQuery(slug as string);
   const { addItemToCart } = useCart();
@@ -255,6 +259,11 @@ export default function ProductPage() {
   function addToCart() {
     if (!isSelected) return;
     // to show btn feedback while product carting
+    if (!userData) {
+      setModalView("LOGIN_VIEW");
+      return openModal();
+    }
+
     setAddToCartLoader(true);
     setTimeout(() => {
       setAddToCartLoader(false);
