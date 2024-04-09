@@ -71,43 +71,45 @@ const CheckoutForm: React.FC = () => {
     );
     const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {});
     console.log(data);
-    if (data.success) {
-      var options = {
-        key: razorpayKeys.keys.key,
-        amount: "50000",
-        currency: "INR",
-        name: "YOK",
-        description: "Test Transaction",
-        image:
-          "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
-        order_id: data.order.id,
-        handler: function (response: any) {
-          console.log(response);
-          updateUser({ ...input, response });
-        },
-        prefill: {
-          name: "John doe",
-          email: "johndoe@gmail.com",
-          contact: "9999999999",
-        },
-        notes: {
-          test: "This is test function",
-        },
-        theme: {
-          color: "#3399cc",
-        },
-      };
-      var rzp1 = new window.Razorpay(options);
-      rzp1.open();
-      rzp1.on("payment.failed", function (response: any) {
-        alert(response.error.code);
-        alert(response.error.description);
-        alert(response.error.source);
-        alert(response.error.step);
-        alert(response.error.reason);
-        alert(response.error.metadata.order_id);
-        alert(response.error.metadata.payment_id);
-      });
+    if (selectedOption === "online") {
+      if (data.success) {
+        var options = {
+          key: razorpayKeys.keys.key,
+          amount: "50000",
+          currency: "INR",
+          name: "YOK",
+          description: "Test Transaction",
+          image:
+            "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
+          order_id: data.order.id,
+          handler: function (response: any) {
+            console.log(response);
+            updateUser({ ...input, response });
+          },
+          prefill: {
+            name: "John doe",
+            email: "johndoe@gmail.com",
+            contact: "9999999999",
+          },
+          notes: {
+            test: "This is test function",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+        var rzp1 = new window.Razorpay(options);
+        rzp1.open();
+        rzp1.on("payment.failed", function (response: any) {
+          alert(response.error.code);
+          alert(response.error.description);
+          alert(response.error.source);
+          alert(response.error.step);
+          alert(response.error.reason);
+          alert(response.error.metadata.order_id);
+          alert(response.error.metadata.payment_id);
+        });
+      }
     }
     if (!isEmpty) {
       console.log("updateUser", updateUser);

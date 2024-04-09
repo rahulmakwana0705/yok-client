@@ -69,7 +69,15 @@ try {
         },
         transactionId: {
             type: String
-        }
+        },
+        shipment_order_id: {
+            type: String,
+            default: null
+        },
+        shipping_id: {
+            type: String,
+            default: null
+        },
     }, { timestamps: true });
 
     Order = mongoose.model('Order', OrderSchema);
