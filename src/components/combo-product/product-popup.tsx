@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import isEmpty from "lodash/isEmpty";
 import { ROUTES } from "@utils/routes";
-import { useUI } from "@contexts/ui.context";
 import Button from "@components/ui/button";
 import Counter from "@components/common/counter";
 import { useCart } from "@contexts/cart/cart.context";
@@ -12,13 +11,19 @@ import usePrice from "@framework/product/use-price";
 import { getVariations } from "@framework/utils/get-variations";
 import { useTranslation } from "next-i18next";
 import Cookies from "js-cookie";
+import { useUI } from "@contexts/ui.context";
 
 export default function ProductPopup() {
   const { t } = useTranslation("common");
 
+  const { openSearch, openModal, setModalView, isAuthorized } = useUI();
+
+  var userData;
   const authToken = Cookies.get("token");
-  const userData = JSON.parse(authToken);
-  console.log("userData", userData);
+  if (authToken) {
+    userData = JSON.parse(authToken);
+    console.log("userData", userData);
+  }
 
   const {
     modalData: { data },
@@ -48,6 +53,10 @@ export default function ProductPopup() {
 
   function addToCart() {
     if (!isSelected) return;
+    if (!userData) {
+      setModalView("LOGIN_VIEW");
+      return openModal();
+    }
     // to show btn feedback while product carting
     setAddToCartLoader(true);
     setTimeout(() => {

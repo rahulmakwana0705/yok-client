@@ -174,13 +174,13 @@ const ProductCard: FC<ProductProps> = ({
             )}
         </div>
 
-        {variant === "gridModernWide" && (
+        {/* {variant === "gridModernWide" && (
           <div className="absolute ltr:right-2 rtl:left-2 ltr:sm:right-3 rtl:sm:left-3 bottom-6 space-y-2 w-[32px] sm:w-[42px] lg:w-[52px]">
             <ProductViewIcon className="w-full transition duration-300 ease-in delay-100 bg-white rounded-md sm:opacity-0 group-hover:opacity-100" />
             <ProductWishIcon className="w-full transition duration-300 ease-in delay-200 bg-white rounded-md sm:opacity-0 group-hover:opacity-100" />
             <ProductCompareIcon className="w-full transition duration-300 ease-in delay-300 bg-white rounded-md sm:opacity-0 group-hover:opacity-100" />
           </div>
-        )}
+        )} */}
       </div>
       <div
         className={cn(
@@ -297,12 +297,12 @@ const ProductCard: FC<ProductProps> = ({
         </div>
       </div>
 
-      {(variant === "gridTrendy" || variant === "gridModern") && (
+      {/* {(variant === "gridTrendy" || variant === "gridModern") && (
         <div className="absolute flex ltr:right-2 rtl:left-2 bottom-2 gap-x-2">
           <ProductWishIcon className="transition ease-in duration-300 sm:opacity-0 group-hover:opacity-100 delay-200 w-[35px] sm:w-[42px] lg:w-[52px] bg-[#F1F3F4] rounded-md" />
           <ProductCompareIcon className="transition ease-in duration-300 sm:opacity-0 group-hover:opacity-100 delay-300 w-[35px] sm:w-[42px] lg:w-[52px] bg-[#F1F3F4] rounded-md" />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

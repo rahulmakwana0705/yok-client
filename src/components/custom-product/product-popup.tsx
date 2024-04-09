@@ -16,9 +16,14 @@ import Cookies from "js-cookie";
 export default function ProductPopup() {
   const { t } = useTranslation("common");
 
+  const { openSearch, openModal, setModalView, isAuthorized } = useUI();
+
+  var userData;
   const authToken = Cookies.get("token");
-  const userData = JSON.parse(authToken);
-  console.log("userData", userData);
+  if (authToken) {
+    userData = JSON.parse(authToken);
+    console.log("userData", userData);
+  }
 
   const {
     modalData: { data },
@@ -48,6 +53,10 @@ export default function ProductPopup() {
 
   function addToCart() {
     if (!isSelected) return;
+    if (!userData) {
+      setModalView("LOGIN_VIEW");
+      return openModal();
+    }
     // to show btn feedback while product carting
     setAddToCartLoader(true);
     setTimeout(() => {
