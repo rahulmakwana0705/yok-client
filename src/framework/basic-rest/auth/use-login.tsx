@@ -30,6 +30,7 @@ export const useLoginMutation = (
       Cookies.set("token", JSON.stringify(data.data.user));
       authorize();
       closeModal();
+      window.location.reload();
     },
     onError: (error: DefaultError) => {
       console.error("Login error:", error);
