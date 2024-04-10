@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import SearchIcon from "@components/icons/search-icon";
 import { siteSettings } from "@settings/site-settings";
 import HeaderMenu from "@components/layout/header/header-menu";
@@ -12,6 +12,8 @@ import LanguageSwitcher from "@components/ui/language-switcher";
 import { useCart } from "@contexts/cart/cart.context";
 import { useEffect } from "react";
 import axios from "axios";
+import http from "@framework/utils/http";
+import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 
 const AuthMenu = dynamic(() => import("./auth-menu"), { ssr: false });
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
@@ -48,6 +50,24 @@ const Header: React.FC = () => {
     loadCartData();
   }, []);
 
+  const [catogoriesData, SetCatogoriesData] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data: categoryData } = await http.get(
+          API_ENDPOINTS.GET_SUBCATEGORIES
+        );
+        console.log(categoryData.CategoryMenu);
+        SetCatogoriesData(categoryData.CategoryMenu);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <header
       id="siteHeader"
@@ -59,7 +79,8 @@ const Header: React.FC = () => {
           <Logo />
 
           <HeaderMenu
-            data={site_header.menu}
+            // data={site_header.menu}
+            data={catogoriesData}
             className="hidden lg:flex ltr:md:ml-6 rtl:md:mr-6 ltr:xl:ml-10 rtl:xl:mr-10"
           />
 
