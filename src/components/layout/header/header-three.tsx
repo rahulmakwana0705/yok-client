@@ -152,8 +152,8 @@ export default function Header() {
               categoryMenu={site_header?.categoryMenu}
             />
             <HeaderMenu
-              data={catogoriesData}
-              // data={site_header.menu}
+              // data={catogoriesData}
+              data={site_header.menu}
               className="hidden lg:flex ltr:pl-3.5 rtl:pr-3.5 ltr:xl:pl-5 rtl:xl:pr-5 "
             />
           </div>

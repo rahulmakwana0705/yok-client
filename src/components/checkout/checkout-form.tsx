@@ -24,6 +24,7 @@ interface CheckoutInputType {
   zipCode: string;
   save: boolean;
   note: string;
+  paymentMethod: string;
   response: object;
 }
 
@@ -60,7 +61,7 @@ const CheckoutForm: React.FC = () => {
       product: product._id,
       quantity: product?.quantity || 0,
     }));
-
+    const inputData: CheckoutInputType = { ...input, paymentMethod: selectedOption };
     if (selectedOption === "online") {
     } else if (selectedOption === "cod") {
     }
@@ -69,7 +70,7 @@ const CheckoutForm: React.FC = () => {
     const { data: razorpayKeys } = await http.get(
       API_ENDPOINTS.GET_RAZORPAYKEYS
     );
-    const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {});
+    const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, inputData);
     console.log(data);
     if (selectedOption === "online") {
       if (data.success) {

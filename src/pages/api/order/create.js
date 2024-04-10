@@ -9,21 +9,21 @@ export default async function handler(req, res) {
         try {
             const { paymentMethod, paymentStatus, products, shippingAddress, status, totalPrice, tracking_number, transactionId, user } = req.body;
 
-            const newOrder = new Order({
-                user,
-                products,
-                totalPrice,
-                tracking_number,
-                shippingAddress,
-                status,
-                paymentMethod,
-                paymentStatus,
-                transactionId
-            });
+            // const newOrder = new Order({
+            //     user,
+            //     products,
+            //     totalPrice,
+            //     tracking_number,
+            //     shippingAddress,
+            //     status,
+            //     paymentMethod,
+            //     paymentStatus,
+            //     transactionId
+            // });
 
-            await newOrder.save();
+            // await newOrder.save();
 
-            if (paymentMethod !== 'COD') {
+            if (paymentMethod !== 'cod') {
                 const razorPay = await getRazorpayInstance();
                 const options = {
                     amount: 50000,
@@ -33,12 +33,10 @@ export default async function handler(req, res) {
                 res.status(200).json({
                     success: true,
                     order,
-                    newOrder
                 });
             } else {
                 res.status(200).json({
                     success: true,
-                    newOrder
                 });
             }
 
