@@ -1,8 +1,7 @@
-import type { GetStaticProps } from "next";
 import Container from "@components/ui/container";
 import HeroSlider from "@containers/hero-slider";
 import Layout from "@components/layout/layout-three";
-import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import { fetchFlashSaleProducts } from "@framework/product/get-all-flash-sale-products";
 import { fetchCategories } from "@framework/category/get-all-categories";
@@ -18,9 +17,7 @@ import NewArrivalsProductFeedWithTabs from "@components/product/feeds/new-arriva
 import BannerCard from "@components/common/banner-card";
 import CollectionBlock from "@containers/collection-block";
 import TestimonialCarousel from "@containers/testimonial-carousel";
-// All data file
 import { bannerDataContemporary } from "@framework/static/banner";
-// import { homeContemporaryHeroSlider as banners } from "@framework/static/banner";
 import SaleBannerGrid from "@containers/sale-banner-grid";
 import TrendingProductFeedWithTabs from "@components/product/feeds/trending-product-feed-with-tabs";
 import Subscription from "@components/common/subscription";
@@ -44,7 +41,6 @@ export default function Home({
     <>
       <HeroSlider
         data={banners}
-        // data={banners}
         variantRounded="default"
         variant="fullWidth"
         prevNextButtons="none"
@@ -116,11 +112,11 @@ export default function Home({
 }
 
 Home.Layout = Layout;
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+
+export async function getServerSideProps({ locale }) {
   const queryClient = new QueryClient();
 
   try {
-    // Fetch banner data from the API endpoint
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/banner/get`
     );
@@ -171,30 +167,28 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         contemporaryBanner1,
         bannerDataContemporary,
         contemporaryBanner2,
-        dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-        ...(await serverSideTranslations(locale!, [
+        dehydratedState: JSON.parse(JSON.stringify(queryClient)),
+        ...(await serverSideTranslations(locale, [
           "common",
           "forms",
           "menu",
           "footer",
         ])),
       },
-      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching banner data:", error);
     return {
       props: {
         banners: [],
-        dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-        ...(await serverSideTranslations(locale!, [
+        dehydratedState: JSON.parse(JSON.stringify(queryClient)),
+        ...(await serverSideTranslations(locale, [
           "common",
           "forms",
           "menu",
           "footer",
         ])),
       },
-      revalidate: 60,
     };
   }
-};
+}

@@ -1,10 +1,8 @@
-/* eslint-disable */
 import Layout from '@components/layout/layout';
 import Container from '@components/ui/container';
 import PageHeader from '@components/ui/page-header';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import { GetStaticProps } from 'next';
 import axios from 'axios';
 
 function makeTitleToDOMId(title: string) {
@@ -43,14 +41,14 @@ export default function TermsPage({ termsContent }) {
 
 TermsPage.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export async function getServerSideProps({ locale }) {
   try {
     const response = await axios.get("http://localhost:3000/api/terms/get");
     const termsContent = response.data.termsConditions.content || '';
 
     return {
       props: {
-        ...(await serverSideTranslations(locale!, [
+        ...(await serverSideTranslations(locale, [
           'common',
           'forms',
           'menu',
@@ -64,7 +62,7 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     console.error('Error fetching terms and conditions:', error);
     return {
       props: {
-        ...(await serverSideTranslations(locale!, [
+        ...(await serverSideTranslations(locale, [
           'common',
           'forms',
           'menu',
@@ -75,4 +73,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
       },
     };
   }
-};
+}
