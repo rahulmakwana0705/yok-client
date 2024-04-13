@@ -47,7 +47,7 @@ const ReviewForm: React.FC = () => {
       rating: rating,
     };
 
-    fetch("http://localhost:3000/api/rating/create", {
+    fetch(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/rating/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

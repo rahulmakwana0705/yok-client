@@ -271,9 +271,9 @@ export default function ProductPage() {
 
   const isSelected = !isEmpty(variations)
     ? !isEmpty(attributes) &&
-      Object.keys(variations).every((variation) =>
-        attributes.hasOwnProperty(variation)
-      )
+    Object.keys(variations).every((variation) =>
+      attributes.hasOwnProperty(variation)
+    )
     : true;
 
   function addToCart() {
@@ -303,7 +303,7 @@ export default function ProductPage() {
     console.log("item", item);
     console.log("quantity", quantity);
 
-    fetch("http://localhost:3000/api/add-to-cart/create", {
+    fetch(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/add-to-cart/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -751,9 +751,8 @@ export default function ProductPage() {
               <Button
                 onClick={addToCart}
                 variant="slim"
-                className={`w-full md:w-6/12 xl:w-full ${
-                  !isSelected && "bg-gray-400 hover:bg-gray-400"
-                }`}
+                className={`w-full md:w-6/12 xl:w-full ${!isSelected && "bg-gray-400 hover:bg-gray-400"
+                  }`}
                 disabled={!isSelected}
                 loading={addToCartLoader}
               >

@@ -7,7 +7,7 @@ connectToDatabase();
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
-        // const SECRET_KEY = process.env.SECRET_KEY;
+        // const SECRET_KEY = process.env.NEXT_SECRET_KEY;
         // const token = req.cookies.auth_token;
         // const decodedToken = jwt.verify(token, SECRET_KEY);
         // console.log('token in get prodct decodedToken', decodedToken)

@@ -11,7 +11,7 @@ connectToDatabase();
 
 export default async function handler(req, res) {
     await corsMiddleware(req, res, async () => {
-        const SECRET_KEY = process.env.SECRET_KEY;
+        const SECRET_KEY = process.env.NEXT_SECRET_KEY;
 
         if (req.method === 'POST') {
             try {

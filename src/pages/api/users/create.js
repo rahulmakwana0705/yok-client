@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 connectToDatabase();
 
 export default async function handler(req, res) {
-    const SECRET_KEY = process.env.SECRET_KEY;
+    const SECRET_KEY = process.env.NEXT_SECRET_KEY;
 
     if (req.method === 'POST') {
         try {

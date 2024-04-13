@@ -45,7 +45,7 @@ PrivacyPage.Layout = Layout;
 
 export async function getServerSideProps({ locale }) {
   try {
-    const response = await axios.get("http://localhost:3000/api/policy/get");
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/policy/get`);
     const privacyPolicyContent = response.data.privacyPolicy.content || "";
 
     return {

@@ -9,7 +9,7 @@ connectToDatabase();
 export default async function handler(req, res) {
     if (req.method === 'GET') {
         try {
-            const SECRET_KEY = process.env.SECRET_KEY;
+            const SECRET_KEY = process.env.NEXT_SECRET_KEY;
             const token = req.cookies.auth_token;
 
             const decodedToken = jwt.verify(token, SECRET_KEY);
