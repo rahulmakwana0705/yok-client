@@ -43,7 +43,7 @@ TermsPage.Layout = Layout;
 
 export async function getServerSideProps({ locale }) {
   try {
-    const response = await axios.get("http://localhost:3000/api/terms/get");
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/terms/get`);
     const termsContent = response.data.termsConditions.content || '';
 
     return {
