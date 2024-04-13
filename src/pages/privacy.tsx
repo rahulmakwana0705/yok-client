@@ -1,20 +1,20 @@
 /* eslint-disable */
-import Layout from '@components/layout/layout';
-import Container from '@components/ui/container';
-import PageHeader from '@components/ui/page-header';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next';
-import { GetStaticProps } from 'next';
-import axios from 'axios';
+import Layout from "@components/layout/layout";
+import Container from "@components/ui/container";
+import PageHeader from "@components/ui/page-header";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
+import { GetStaticProps } from "next";
+import axios from "axios";
 
 function makeTitleToDOMId(title: string) {
-  return title.toLowerCase().split(' ').join('_');
+  return title.toLowerCase().split(" ").join("_");
 }
 
 export default function PrivacyPage({ privacyPolicyContent }) {
-  const { t } = useTranslation('privacy');
+  const { t } = useTranslation("privacy");
 
-  console.log(privacyPolicyContent)
+  console.log(privacyPolicyContent);
   return (
     <>
       <PageHeader pageHeader="text-page-privacy-policy" />
@@ -24,7 +24,7 @@ export default function PrivacyPage({ privacyPolicyContent }) {
             <div className="pt-0 md:w-full lg:pt-2">
               <div className="mb-10">
                 <div className="mb-4 text-lg font-bold md:text-xl lg:text-2xl text-heading">
-                  {t('Privacy Policy')}
+                  {t("Privacy Policy")}
                 </div>
                 <div
                   className="text-sm leading-7 text-heading lg:text-base lg:leading-loose"
@@ -43,36 +43,36 @@ export default function PrivacyPage({ privacyPolicyContent }) {
 
 PrivacyPage.Layout = Layout;
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+export async function getServerSideProps({ locale }) {
   try {
     const response = await axios.get("http://localhost:3000/api/policy/get");
-    const privacyPolicyContent = response.data.privacyPolicy.content || '';
+    const privacyPolicyContent = response.data.privacyPolicy.content || "";
 
     return {
       props: {
         ...(await serverSideTranslations(locale!, [
-          'common',
-          'forms',
-          'menu',
-          'privacy',
-          'footer',
+          "common",
+          "forms",
+          "menu",
+          "privacy",
+          "footer",
         ])),
         privacyPolicyContent,
       },
     };
   } catch (error) {
-    console.error('Error fetching privacy policy:', error);
+    console.error("Error fetching privacy policy:", error);
     return {
       props: {
         ...(await serverSideTranslations(locale!, [
-          'common',
-          'forms',
-          'menu',
-          'privacy',
-          'footer',
+          "common",
+          "forms",
+          "menu",
+          "privacy",
+          "footer",
         ])),
-        privacyPolicyContent: '',
+        privacyPolicyContent: "",
       },
     };
   }
-};
+}

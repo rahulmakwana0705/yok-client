@@ -1,9 +1,6 @@
 import Container from "@components/ui/container";
 import Layout from "@components/layout/layout";
 import Subscription from "@components/common/subscription";
-import PageHeader from "@components/ui/page-header";
-import ContactForm from "@components/common/form/contact-form";
-import ContactInfoBlock from "@containers/contact-info";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetStaticProps } from "next";
