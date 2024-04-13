@@ -1,41 +1,67 @@
-import React, { useRef } from 'react';
-import SearchIcon from '@components/icons/search-icon';
-import { siteSettings } from '@settings/site-settings';
-import HeaderMenu from '@components/layout/header/header-menu';
-import Logo from '@components/ui/logo';
-import { useUI } from '@contexts/ui.context';
-import { ROUTES } from '@utils/routes';
-import { addActiveScroll } from '@utils/add-active-scroll';
-import dynamic from 'next/dynamic';
-import { useTranslation } from 'next-i18next';
-import LanguageSwitcher from '@components/ui/language-switcher';
-import WishButton from '@components/ui/wish-button';
-import { UserLineIcon } from '@components/icons/UserLineIcon';
-import Link from '@components/ui/link';
-import CategoryMenu from '@components/ui/category-menu';
-const AuthMenu = dynamic(() => import('@components/layout/header/auth-menu'), {
+import React, { useEffect, useRef } from "react";
+import { useState } from "react";
+import SearchIcon from "@components/icons/search-icon";
+import { siteSettings } from "@settings/site-settings";
+import HeaderMenu from "@components/layout/header/header-menu";
+import Logo from "@components/ui/logo";
+import { useUI } from "@contexts/ui.context";
+import { ROUTES } from "@utils/routes";
+import { addActiveScroll } from "@utils/add-active-scroll";
+import dynamic from "next/dynamic";
+import { useTranslation } from "next-i18next";
+import LanguageSwitcher from "@components/ui/language-switcher";
+import WishButton from "@components/ui/wish-button";
+import { UserLineIcon } from "@components/icons/UserLineIcon";
+import Link from "@components/ui/link";
+import CategoryMenu from "@components/ui/category-menu";
+import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
+import http from "@framework/utils/http";
+
+const AuthMenu = dynamic(() => import("@components/layout/header/auth-menu"), {
   ssr: false,
 });
-const CartButton = dynamic(() => import('@components/cart/cart-button'), {
+const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
 
 type DivElementRef = React.MutableRefObject<HTMLDivElement>;
 const { site_header } = siteSettings;
 export default function Header() {
-  const { openSidebar, setDrawerView, openModal, setModalView, isAuthorized } =
-    useUI();
+  const {
+    openSidebar,
+    setDrawerView,
+    openModal,
+    setModalView,
+    isAuthorized,
+  } = useUI();
   const { t } = useTranslation();
   const siteHeaderRef = useRef() as DivElementRef;
   addActiveScroll(siteHeaderRef);
   function handleLogin() {
-    setModalView('LOGIN_VIEW');
+    setModalView("LOGIN_VIEW");
     return openModal();
   }
   function handleMobileMenu() {
-    setDrawerView('MOBILE_MENU');
+    setDrawerView("MOBILE_MENU");
     return openSidebar();
   }
+  const [catogoriesData, SetCatogoriesData] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data: categoryData } = await http.get(
+          API_ENDPOINTS.GET_SUBCATEGORIES
+        );
+        console.log(categoryData.CategoryMenu);
+        SetCatogoriesData(categoryData.CategoryMenu);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   return (
     <header
       id="siteHeader"
@@ -91,7 +117,7 @@ export default function Header() {
                 <input
                   id="search"
                   className="w-full text-sm placeholder-gray-400 bg-transparent rounded-md outline-none focus:border-2 focus:border-gray-600 ltr:pr-4 rtl:pl-4 ltr:pl-14 rtl:pr-14 h-14 text-heading lg:text-base"
-                  placeholder={'Search Anything...'}
+                  placeholder={"Search Anything..."}
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -103,16 +129,16 @@ export default function Header() {
           </div>
           <div className="flex items-center justify-end flex-shrink-0">
             <div className="flex items-center transition-all wishlistShopping gap-x-7 lg:gap-x-6 xl:gap-x-8 2xl:gap-x-10 ltr:pl-3 rtl:pr-3">
-              <div className="flex md:gap-x-4 align-center ">
+              {/* <div className="flex md:gap-x-4 align-center ">
                 <WishButton />
                 <span className="hidden text-sm font-semibold transition-all duration-100 ease-in-out cursor-pointer lg:font-normal lg:block xl:text-base text-heading">
-                  {t('menu:menu-wishlist')}
+                  {t("menu:menu-wishlist")}
                 </span>
-              </div>
+              </div> */}
               <div className="hidden lg:flex md:gap-x-4 align-center">
                 <CartButton />
                 <span className="hidden text-sm font-semibold transition-all duration-100 ease-in-out cursor-pointer lg:font-normal lg:block xl:text-base text-heading">
-                  {t('menu:menu-shopping')}
+                  {t("menu:menu-shopping")}
                 </span>
               </div>
             </div>
@@ -126,7 +152,8 @@ export default function Header() {
               categoryMenu={site_header?.categoryMenu}
             />
             <HeaderMenu
-              data={site_header.menu}
+              data={catogoriesData}
+              // data={site_header.menu}
               className="hidden lg:flex ltr:pl-3.5 rtl:pr-3.5 ltr:xl:pl-5 rtl:xl:pr-5 "
             />
           </div>
@@ -140,7 +167,7 @@ export default function Header() {
                 children: (
                   <>
                     <UserLineIcon className="w-4 xl:w-[17px] h-auto text-black" />
-                    {t('text-login')}
+                    {t("text-login")}
                   </>
                 ),
                 onClick: handleLogin,

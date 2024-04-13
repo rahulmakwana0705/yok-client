@@ -1,16 +1,22 @@
-import React, { useRef } from 'react';
-import SearchIcon from '@components/icons/search-icon';
-import { siteSettings } from '@settings/site-settings';
-import HeaderMenu from '@components/layout/header/header-menu';
-import Logo from '@components/ui/logo';
-import { useUI } from '@contexts/ui.context';
-import { ROUTES } from '@utils/routes';
-import { addActiveScroll } from '@utils/add-active-scroll';
-import dynamic from 'next/dynamic';
-import { useTranslation } from 'next-i18next';
-import LanguageSwitcher from '@components/ui/language-switcher';
-const AuthMenu = dynamic(() => import('./auth-menu'), { ssr: false });
-const CartButton = dynamic(() => import('@components/cart/cart-button'), {
+import React, { useRef, useState } from "react";
+import SearchIcon from "@components/icons/search-icon";
+import { siteSettings } from "@settings/site-settings";
+import HeaderMenu from "@components/layout/header/header-menu";
+import Logo from "@components/ui/logo";
+import { useUI } from "@contexts/ui.context";
+import { ROUTES } from "@utils/routes";
+import { addActiveScroll } from "@utils/add-active-scroll";
+import dynamic from "next/dynamic";
+import { useTranslation } from "next-i18next";
+import LanguageSwitcher from "@components/ui/language-switcher";
+import { useCart } from "@contexts/cart/cart.context";
+import { useEffect } from "react";
+import axios from "axios";
+import http from "@framework/utils/http";
+import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
+
+const AuthMenu = dynamic(() => import("./auth-menu"), { ssr: false });
+const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
 
@@ -18,14 +24,49 @@ type DivElementRef = React.MutableRefObject<HTMLDivElement>;
 const { site_header } = siteSettings;
 const Header: React.FC = () => {
   const { openSearch, openModal, setModalView, isAuthorized } = useUI();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
   const siteHeaderRef = useRef() as DivElementRef;
   addActiveScroll(siteHeaderRef);
 
   function handleLogin() {
-    setModalView('LOGIN_VIEW');
+    setModalView("LOGIN_VIEW");
     return openModal();
   }
+
+  const { addItemToCart } = useCart();
+  useEffect(() => {
+    const loadCartData = async () => {
+      try {
+        const response = await axios.get("/api/add-to-cart/get");
+        console.log("response cart", response);
+        console.log("response cart", response?.data?.cartItems);
+        response?.data?.cartItems.map((item) => {
+          addItemToCart(item, item.quantity);
+        });
+      } catch (error) {
+        console.log("error on get cart", error);
+      }
+    };
+    loadCartData();
+  }, []);
+
+  const [catogoriesData, SetCatogoriesData] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data: categoryData } = await http.get(
+          API_ENDPOINTS.GET_SUBCATEGORIES
+        );
+        console.log(categoryData.CategoryMenu);
+        SetCatogoriesData(categoryData.CategoryMenu);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <header
@@ -38,7 +79,8 @@ const Header: React.FC = () => {
           <Logo />
 
           <HeaderMenu
-            data={site_header.menu}
+            // data={site_header.menu}
+            data={catogoriesData}
             className="hidden lg:flex ltr:md:ml-6 rtl:md:mr-6 ltr:xl:ml-10 rtl:xl:mr-10"
           />
 
@@ -60,13 +102,13 @@ const Header: React.FC = () => {
                 className="text-sm font-semibold xl:text-base text-heading"
                 btnProps={{
                   className:
-                    'text-sm xl:text-base text-heading font-semibold focus:outline-none',
+                    "text-sm xl:text-base text-heading font-semibold focus:outline-none",
                   // @ts-ignore
-                  children: t('text-sign-in'),
+                  children: t("text-sign-in"),
                   onClick: handleLogin,
                 }}
               >
-                {t('text-account')}
+                {t("text-account")}
               </AuthMenu>
             </div>
             <CartButton />

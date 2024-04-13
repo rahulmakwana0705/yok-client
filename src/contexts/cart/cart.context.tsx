@@ -36,9 +36,9 @@ export const CartProvider: React.FC = (props) => {
     JSON.parse(savedCart!)
   );
 
-  React.useEffect(() => {
-    saveCart(JSON.stringify(state));
-  }, [state, saveCart]);
+  // React.useEffect(() => {
+  //   saveCart(JSON.stringify(state));
+  // }, [state, saveCart]);
 
   const addItemToCart = (item: Item, quantity: number) =>
     dispatch({ type: "ADD_ITEM_WITH_QUANTITY", item, quantity });

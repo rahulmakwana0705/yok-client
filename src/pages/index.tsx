@@ -1,8 +1,7 @@
-import type { GetStaticProps } from "next";
 import Container from "@components/ui/container";
 import HeroSlider from "@containers/hero-slider";
 import Layout from "@components/layout/layout-three";
-import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import { fetchFlashSaleProducts } from "@framework/product/get-all-flash-sale-products";
 import { fetchCategories } from "@framework/category/get-all-categories";
@@ -18,9 +17,7 @@ import NewArrivalsProductFeedWithTabs from "@components/product/feeds/new-arriva
 import BannerCard from "@components/common/banner-card";
 import CollectionBlock from "@containers/collection-block";
 import TestimonialCarousel from "@containers/testimonial-carousel";
-// All data file
 import { bannerDataContemporary } from "@framework/static/banner";
-import { homeContemporaryHeroSlider as banners } from "@framework/static/banner";
 import SaleBannerGrid from "@containers/sale-banner-grid";
 import TrendingProductFeedWithTabs from "@components/product/feeds/trending-product-feed-with-tabs";
 import Subscription from "@components/common/subscription";
@@ -34,7 +31,12 @@ import BrandTimerBlock from "@containers/brand-timer-block";
 import dynamic from "next/dynamic";
 const DownloadApps = dynamic(() => import("@components/common/download-apps"));
 
-export default function Home() {
+export default function Home({
+  banners,
+  bannerDataContemporary,
+  contemporaryBanner1,
+  contemporaryBanner2,
+}) {
   return (
     <>
       <HeroSlider
@@ -63,16 +65,26 @@ export default function Home() {
           variant="modern"
           sectionHeading="text-featured-products"
         />
-        <BannerCard
-          key={`banner--key${banner.id}`}
-          banner={contemporaryBanner1}
-          href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
-          className="mb-12 md:mb-14 xl:mb-16 pb-0.5 md:pb-0 lg:pb-1 xl:pb-0 md:-mt-2.5"
-        />
+        {contemporaryBanner1 && (
+          <BannerCard
+            key={`banner--key${banner._id}`}
+            banner={
+              Array.isArray(contemporaryBanner1)
+                ? contemporaryBanner1[0]
+                : contemporaryBanner1
+            }
+            href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
+            className="mb-12 md:mb-14 xl:mb-16 pb-0.5 md:pb-0 lg:pb-1 xl:pb-0 md:-mt-2.5"
+          />
+        )}
         <TrendingProductFeedWithTabs />
         <BannerCard
-          key={`banner--key1${banner.id}`}
-          banner={contemporaryBanner2}
+          key={`banner--key1${banner._id}`}
+          banner={
+            Array.isArray(contemporaryBanner2)
+              ? contemporaryBanner2[0]
+              : contemporaryBanner2
+          }
           href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
           className="mb-12 md:mb-14 xl:mb-16 pb-0.5 md:pb-0 lg:pb-1 xl:pb-0 md:-mt-2.5"
         />
@@ -100,36 +112,83 @@ export default function Home() {
 }
 
 Home.Layout = Layout;
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
+
+export async function getServerSideProps({ locale }) {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.FLASH_SALE_PRODUCTS, { limit: 10 }],
-    queryFn: fetchFlashSaleProducts,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.CATEGORIES, { limit: 10 }],
-    queryFn: fetchCategories,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.NEW_ARRIVAL_PRODUCTS, { limit: 10 }],
-    queryFn: fetchNewArrivalProducts,
-  });
-  await queryClient.prefetchQuery({
-    queryKey: [API_ENDPOINTS.BRANDS, { limit: 0 }],
-    queryFn: fetchBrands,
-  });
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/banner/get`
+    );
+    if (!res.ok) {
+      throw new Error("Failed to fetch banner data");
+    }
+    const data = await res.json();
+    const firstPositionData = data.Banners.filter(
+      (item) => item.position === "first"
+    );
+    const secondPositionData = data.Banners.filter(
+      (item) => item.position === "second"
+    );
+    const thirdPositionData = data.Banners.filter(
+      (item) => item.position === "third"
+    );
+    const fourthPositionData = data.Banners.filter(
+      (item) => item.position === "fourth"
+    );
+    const fifthPositionData = data.Banners.filter(
+      (item) => item.position === "fifth"
+    );
+    const banners = firstPositionData;
+    const bannerDataContemporary = secondPositionData;
+    const contemporaryBanner1 = thirdPositionData;
+    const contemporaryBanner2 = fourthPositionData;
 
-  return {
-    props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-      ...(await serverSideTranslations(locale!, [
-        "common",
-        "forms",
-        "menu",
-        "footer",
-      ])),
-    },
-    revalidate: 60,
-  };
-};
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.FLASH_SALE_PRODUCTS, { limit: 10 }],
+      queryFn: fetchFlashSaleProducts,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.CATEGORIES, { limit: 10 }],
+      queryFn: fetchCategories,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.NEW_ARRIVAL_PRODUCTS, { limit: 10 }],
+      queryFn: fetchNewArrivalProducts,
+    });
+    await queryClient.prefetchQuery({
+      queryKey: [API_ENDPOINTS.BRANDS, { limit: 0 }],
+      queryFn: fetchBrands,
+    });
+
+    return {
+      props: {
+        banners,
+        contemporaryBanner1,
+        bannerDataContemporary,
+        contemporaryBanner2,
+        dehydratedState: JSON.parse(JSON.stringify(queryClient)),
+        ...(await serverSideTranslations(locale, [
+          "common",
+          "forms",
+          "menu",
+          "footer",
+        ])),
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching banner data:", error);
+    return {
+      props: {
+        banners: [],
+        dehydratedState: JSON.parse(JSON.stringify(queryClient)),
+        ...(await serverSideTranslations(locale, [
+          "common",
+          "forms",
+          "menu",
+          "footer",
+        ])),
+      },
+    };
+  }
+}

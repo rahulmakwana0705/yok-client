@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "@components/ui/container";
 import Layout from "@components/layout/layout";
 import Subscription from "@components/common/subscription";
@@ -28,6 +28,9 @@ import { useSsrCompatible } from "@utils/use-ssr-compatible";
 import { CheckBox } from "@components/ui/checkbox";
 
 import cn from "classnames";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useUI } from "@contexts/ui.context";
 
 const productGalleryCarouselResponsive = {
   "768": {
@@ -38,7 +41,7 @@ const productGalleryCarouselResponsive = {
   },
 };
 
-const data = {
+const dataa = {
   id: 1,
   sku: "N/A",
   name: "Maniac Red Boys",
@@ -197,10 +200,21 @@ const data = {
   ],
 };
 
+var userData;
+const authToken = Cookies.get("token");
+if (authToken) {
+  userData = JSON.parse(authToken);
+  console.log("userData", userData);
+}
+
 export default function ProductPage() {
   const {
     query: { slug },
   } = useRouter();
+
+  const { openSearch, openModal, setModalView, isAuthorized } = useUI();
+
+  const [data, setData] = useState(null);
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { isLoading } = useProductQuery(slug as string);
   const { addItemToCart } = useCart();
@@ -214,6 +228,23 @@ export default function ProductPage() {
   const [checkBoxValue, setCheckBoxValue] = useState<string>("");
 
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+
+  useEffect(() => {
+    const loadCartData = async () => {
+      try {
+        const response = await axios.post(`/api/product/get-single`, {
+          slug,
+        });
+        console.log("response product hahj", response);
+        setData(response?.data);
+      } catch (error) {
+        console.log("error on get cart", error);
+      }
+    };
+    if (slug) {
+      loadCartData();
+    }
+  }, [slug]);
 
   const handleImageUpload = (files) => {
     // console.log("Image selected:", files);
@@ -248,6 +279,10 @@ export default function ProductPage() {
   function addToCart() {
     if (!isSelected) return;
     // to show btn feedback while product carting
+    if (!userData) {
+      setModalView("LOGIN_VIEW");
+      return openModal();
+    }
     setAddToCartLoader(true);
     setTimeout(() => {
       setAddToCartLoader(false);
@@ -264,6 +299,39 @@ export default function ProductPage() {
       pauseOnHover: true,
       draggable: true,
     });
+
+    console.log("item", item);
+    console.log("quantity", quantity);
+
+    fetch("http://localhost:3000/api/add-to-cart/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userData?._id,
+        slug: slug,
+        productId: data?._id,
+        name: item?.name,
+        image: item?.image,
+        price: item?.price,
+        quantity,
+        attributes: {
+          size: item?.attributes?.size,
+          color: item?.attributes?.color,
+        },
+        itemTotal: quantity * item.price,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add item to cart");
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding item to cart:", error);
+      });
+
     console.log(item, "item");
   }
 

@@ -25,7 +25,7 @@ export default async function handler(req, res) {
                 }
 
                 // Access form data
-                const { title, slug } = req.body;
+                const { title, slug, position } = req.body;
                 const desktopImage = req.files['desktopImage'] ? req.files['desktopImage'][0] : null;
                 const mobileImage = req.files['mobileImage'] ? req.files['mobileImage'][0] : null;
 
@@ -59,6 +59,7 @@ export default async function handler(req, res) {
                 const banner = new Banners({
                     title,
                     slug,
+                    position,
                     image: {
                         desktop: { url: desktopImageUrl },
                         mobile: { url: mobileImageUrl },

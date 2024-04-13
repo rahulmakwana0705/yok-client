@@ -1,14 +1,14 @@
-import { useRef } from 'react';
-import SearchIcon from '@components/icons/search-icon';
-import Logo from '@components/ui/logo';
-import { useUI } from '@contexts/ui.context';
-import { ROUTES } from '@utils/routes';
-import { addActiveScroll } from '@utils/add-active-scroll';
-import dynamic from 'next/dynamic';
-import { useTranslation } from 'next-i18next';
-import LanguageSwitcher from '@components/ui/language-switcher';
-const AuthMenu = dynamic(() => import('./auth-menu'), { ssr: false });
-const CartButton = dynamic(() => import('@components/cart/cart-button'), {
+import { useRef } from "react";
+import SearchIcon from "@components/icons/search-icon";
+import Logo from "@components/ui/logo";
+import { useUI } from "@contexts/ui.context";
+import { ROUTES } from "@utils/routes";
+import { addActiveScroll } from "@utils/add-active-scroll";
+import dynamic from "next/dynamic";
+import { useTranslation } from "next-i18next";
+import LanguageSwitcher from "@components/ui/language-switcher";
+const AuthMenu = dynamic(() => import("./auth-menu"), { ssr: false });
+const CartButton = dynamic(() => import("@components/cart/cart-button"), {
   ssr: false,
 });
 
@@ -22,16 +22,16 @@ const HeaderTwo: React.FC = () => {
     setModalView,
     isAuthorized,
   } = useUI();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
   const siteHeaderRef = useRef() as DivElementRef;
   addActiveScroll(siteHeaderRef);
 
   function handleLogin() {
-    setModalView('LOGIN_VIEW');
+    setModalView("LOGIN_VIEW");
     return openModal();
   }
   function handleMobileMenu() {
-    setDrawerView('MOBILE_MENU');
+    setDrawerView("MOBILE_MENU");
     return openSidebar();
   }
 
@@ -74,12 +74,12 @@ const HeaderTwo: React.FC = () => {
                 className="text-sm font-semibold xl:text-base text-heading"
                 btnProps={{
                   className:
-                    'text-sm xl:text-base text-heading font-semibold focus:outline-none',
-                  children: t('text-sign-in'),
+                    "text-sm xl:text-base text-heading font-semibold focus:outline-none",
+                  children: t("text-sign-in"),
                   onClick: handleLogin,
                 }}
               >
-                {t('text-account')}
+                {t("text-account")}
               </AuthMenu>
             </div>
             <CartButton />

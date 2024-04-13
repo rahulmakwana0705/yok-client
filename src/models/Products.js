@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 let Product;
 
 try {
-    delete mongoose.connection.models['Product'];
+    // delete mongoose.connection.models['Product'];
     Product = mongoose.model('Product');
 } catch (error) {
     const ProductSchema = new mongoose.Schema(
@@ -46,7 +46,7 @@ try {
             variations: [
                 {
                     id: { type: Number },
-                    value: { type: String },
+                    value: { type: mongoose.Schema.Types.Mixed },
                     attribute: {
                         id: { type: Number },
                         name: { type: String },

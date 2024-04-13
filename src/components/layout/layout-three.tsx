@@ -7,10 +7,31 @@ import CookieBar from "@components/common/cookie-bar";
 import { useAcceptCookies } from "@utils/use-accept-cookies";
 import Button from "@components/ui/button";
 import { useTranslation } from "next-i18next";
+import { useCart } from "@contexts/cart/cart.context";
+import { useEffect } from "react";
+import axios from "axios";
 
 export default function Layout({ children }: React.PropsWithChildren<{}>) {
   const { acceptedCookies, onAcceptCookies } = useAcceptCookies();
   const { t } = useTranslation("common");
+
+  const { addItemToCart } = useCart();
+  useEffect(() => {
+    const loadCartData = async () => {
+      try {
+        const response = await axios.get("/api/add-to-cart/get");
+        console.log("response cart", response);
+        console.log("response cart", response?.data?.cartItems);
+        response?.data?.cartItems.map((item) => {
+          addItemToCart(item, item.quantity);
+        });
+      } catch (error) {
+        console.log("error on get cart", error);
+      }
+    };
+    loadCartData();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <NextSeo
@@ -26,8 +47,7 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
         openGraph={{
           url: "Yok.con.in",
           title: "YOK",
-          description:
-            "",
+          description: "",
           images: [
             {
               url: "/assets/images/og-image-01.png",

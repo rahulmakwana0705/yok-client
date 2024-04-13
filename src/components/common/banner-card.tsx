@@ -14,9 +14,14 @@ interface BannerProps {
   href: LinkProps['href'];
   disableBorderRadius?: boolean;
 }
-
+let num = 0
 function getImage(deviceWidth: number, imgObj: any) {
-  return deviceWidth < 480 ? imgObj.mobile : imgObj.desktop;
+  num++
+  try {
+    return deviceWidth < 480 ? imgObj.mobile : imgObj.desktop;
+  } catch (error) {
+
+  }
 }
 
 export default function BannerCard({

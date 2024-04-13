@@ -5,7 +5,11 @@ import { ManagedUIContext } from "@contexts/ui.context";
 import ManagedModal from "@components/common/modal/managed-modal";
 import ManagedDrawer from "@components/common/drawer/managed-drawer";
 import { useEffect, useRef } from "react";
-import { QueryClient, QueryClientProvider, HydrationBoundary } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  HydrationBoundary,
+} from "@tanstack/react-query";
 import { ToastContainer } from "react-toastify";
 // import { ReactQueryDevtools } from "@tanstack/react-query/devtools";
 import { appWithTranslation } from "next-i18next";
