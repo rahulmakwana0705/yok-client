@@ -9,6 +9,7 @@ import Button from "@components/ui/button";
 import { useForm } from "react-hook-form";
 import TextArea from "@components/ui/text-area";
 import { CheckBox } from "@components/ui/checkbox";
+import { useState } from "react";
 
 interface ContactFormValues {
   name: string;
@@ -18,6 +19,7 @@ interface ContactFormValues {
 }
 
 export default function ContactUsPage() {
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -25,10 +27,38 @@ export default function ContactUsPage() {
   } = useForm<ContactFormValues>();
   function onSubmit(values: ContactFormValues) {
     console.log(values, "contact");
+    values.selectedCheckboxes = selectedCheckboxes;
+    fetch("api/b2b/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add b2b");
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding item to cart:", error);
+      });
   }
   //   const { t } = useTranslation();
 
   const { t } = useTranslation("common");
+  console.log("selectedCheckboxes", selectedCheckboxes);
+
+  const handleCheckboxChange = (label: string) => {
+    if (selectedCheckboxes.includes(label)) {
+      setSelectedCheckboxes((prevState) =>
+        prevState.filter((item) => item !== label)
+      );
+    } else {
+      setSelectedCheckboxes((prevState) => [...prevState, label]);
+    }
+  };
+
   return (
     <>
       {/* <PageHeader pageHeader="text-page-contact-us" /> */}
@@ -75,15 +105,6 @@ export default function ContactUsPage() {
                     variant="solid"
                   />
                 </div>
-                {/* <Input
-                  labelKey="forms:label-subject"
-                  {...register("subject", { required: "forms:name-subject" })}
-                  className="relative"
-                  placeholderKey="forms:placeholder-subject"
-                  errorKey={errors.subject?.message}
-                  variant="solid"
-                /> */}
-
                 <div className="flex flex-col md:flex-row space-y-5 md:space-y-0">
                   <Input
                     type="tel"
@@ -104,67 +125,81 @@ export default function ContactUsPage() {
                   />
                 </div>
                 <div className="relative flex flex-wrap items-center ">
-                  <CheckBox labelKey="Basics" />
-                  {/* <div className="ml-0 lg:ml-20 w-full lg:w-auto">
-                    <CheckBox labelKey="Basics" />
-                  </div>
-                  <div className="ml-0 lg:ml-20 w-full lg:w-auto">
-                    <CheckBox labelKey="Basics" />
-                  </div>
-                  <div className="ml-0 lg:ml-20 w-full lg:w-auto">
-                    <CheckBox labelKey="Basics" />
-                  </div>
-                  <div className="ml-0 lg:ml-20 w-full lg:w-auto">
-                    <CheckBox labelKey="Basics" />
-                  </div>
-                  <div className="ml-0 lg:ml-20 w-full lg:w-auto">
-                    <CheckBox labelKey="Basics" />
-                  </div> */}
+                  <CheckBox
+                    labelKey="Basics"
+                    onChange={() => handleCheckboxChange("Basics")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Basics" />
+                  <CheckBox
+                    labelKey="Stretch T-shirts"
+                    onChange={() => handleCheckboxChange("Stretch T-shirts")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Stretch T-shirts" />
+                  <CheckBox
+                    labelKey="Smart Tech Polo"
+                    onChange={() => handleCheckboxChange("Smart Tech Polo")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Smart Tech Polo" />
+                  <CheckBox
+                    labelKey="Edition Polo"
+                    onChange={() => handleCheckboxChange("Edition Polo")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Edition Polo" />
+                  <CheckBox
+                    labelKey="Oversized"
+                    onChange={() => handleCheckboxChange("Oversized")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Oversized" />
+                  <CheckBox
+                    labelKey="Boxers"
+                    onChange={() => handleCheckboxChange("Boxers")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Boxers" />
+                  <CheckBox
+                    labelKey="Graphic T-shirts"
+                    onChange={() => handleCheckboxChange("Graphic T-shirts")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Graphic T-shirts" />
+                  <CheckBox
+                    labelKey="Sleeveless TankTop"
+                    onChange={() => handleCheckboxChange("Sleeveless TankTop")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Sleeveless TankTop" />
+                  <CheckBox
+                    labelKey="Printed T-shirts"
+                    onChange={() => handleCheckboxChange("Printed T-shirts")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Printed T-shirts" />
+                  <CheckBox
+                    labelKey="Full Sleeves Solids"
+                    onChange={() => handleCheckboxChange("Full Sleeves Solids")}
+                  />
                 </div>
                 <div className="relative flex items-center ">
-                  <CheckBox labelKey="Full Sleeves Solids" />
-                </div>
-                <div className="relative flex items-center ">
-                  <CheckBox labelKey="Shorts" />
+                  <CheckBox
+                    labelKey="Shorts"
+                    onChange={() => handleCheckboxChange("Shorts")}
+                  />
                 </div>
                 <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0">
                   <Input
                     labelKey="Number of Shops"
-                    {...register("city")}
+                    {...register("numberOfShops")}
                     variant="solid"
                     className="w-full lg:w-1/2 "
                   />
-
                   <Input
                     labelKey="Quantity"
-                    {...register("zipCode")}
+                    {...register("quantity")}
                     variant="solid"
                     className="w-full lg:w-1/2 ltr:lg:ml-3 rtl:lg:mr-3 mt-2 md:mt-0"
                   />
