@@ -5,9 +5,11 @@ import { useWindowSize } from '@utils/use-window-size';
 import { useTranslation } from 'next-i18next';
 import { useSsrCompatible } from '@utils/use-ssr-compatible';
 
-const OrdersTable: React.FC = () => {
+const OrdersTable: React.FC<{ orders: Order[] }> = ({ orders }) => {
+  console.log(orders)
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { t } = useTranslation('common');
+
   return (
     <>
       <h2 className="mb-6 text-lg font-bold md:text-xl xl:text-2xl text-heading xl:mb-8">
@@ -44,136 +46,77 @@ const OrdersTable: React.FC = () => {
               </tr>
             </thead>
             <tbody className="text-sm lg:text-base">
-              <tr className="border-b border-gray-300 last:border-b-0">
-                <td className="px-4 py-5 ltr:text-left rtl:text-right">
-                  <Link
-                    href="/my-account/orders/3203"
-                    className="underline hover:no-underline text-body"
-                  >
-                    #3203
-                  </Link>
-                </td>
-                <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-                  March 18, 2021
-                </td>
-                <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-                  Completed
-                </td>
-                <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-                  $16,950.00 for 93 items
-                </td>
-                <td className="px-4 py-5 ltr:text-right rtl:text-left text-heading">
-                  <Link
-                    href="/my-account/orders/3203"
-                    className="text-sm leading-4 bg-heading text-white px-4 py-2.5 inline-block rounded-md hover:text-white hover:bg-gray-600"
-                  >
-                    {t('button-view')}
-                  </Link>
-                </td>
-              </tr>
-              <tr className="border-b border-gray-300 last:border-b-0">
-                <td className="px-4 py-5 ltr:text-left rtl:text-right">
-                  <Link
-                    href="/my-account/orders/3204"
-                    className="underline hover:no-underline text-body"
-                  >
-                    #3204
-                  </Link>
-                </td>
-                <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-                  March 18, 2021
-                </td>
-                <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-                  Completed
-                </td>
-                <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
-                  $16,950.00 for 93 items
-                </td>
-                <td className="px-4 py-5 ltr:text-right rtl:text-left text-heading">
-                  <Link
-                    href="/my-account/orders/3204"
-                    className="text-sm leading-4 bg-heading text-white px-4 py-2.5 inline-block rounded-md hover:text-white hover:bg-gray-600"
-                  >
-                    {t('button-view')}
-                  </Link>
-                </td>
-              </tr>
+              {orders.map(order => (
+                <tr className="border-b border-gray-300 last:border-b-0" key={order._id}>
+                  <td className="px-4 py-5 ltr:text-left rtl:text-right">
+                    <Link
+                      href={`/my-account/orders/${order._id}`}
+                      className="underline hover:no-underline text-body"
+                    >
+                      #{order._id}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
+                    {order.status}
+                  </td>
+                  <td className="px-4 py-5 ltr:text-left rtl:text-right lg:text-center text-heading">
+                    ${order.totalPrice.toFixed(2)} for {order.products.length} items
+                  </td>
+                  <td className="px-4 py-5 ltr:text-right rtl:text-left text-heading">
+                    <Link
+                      href={`/my-account/orders/${order._id}`}
+                      className="text-sm leading-4 bg-heading text-white px-4 py-2.5 inline-block rounded-md hover:text-white hover:bg-gray-600"
+                    >
+                      {t('button-view')}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (
           <div className="w-full space-y-4">
-            <ul className="flex flex-col px-4 pt-5 pb-6 space-y-5 text-sm font-semibold border border-gray-300 rounded-md text-heading">
-              <li className="flex items-center justify-between">
-                {t('text-order')}
-                <span className="font-normal">
-                  <Link
-                    href="/my-account/orders/3203"
-                    className="underline hover:no-underline text-body"
-                  >
-                    #3203
-                  </Link>
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-date')}
-                <span className="font-normal">March 18, 2021</span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-status')}
-                <span className="font-normal">Completed</span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-total')}
-                <span className="font-normal">$16,950.00 for 93 items</span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-actions')}
-                <span className="font-normal">
-                  <Link
-                    href="/my-account/orders/3203"
-                    className="text-sm leading-4 bg-heading text-white px-4 py-2.5 inline-block rounded-md hover:text-white hover:bg-gray-600"
-                  >
-                    {t('button-view')}
-                  </Link>
-                </span>
-              </li>
-            </ul>
-            <ul className="flex flex-col px-4 pt-5 pb-6 space-y-5 text-sm font-semibold border border-gray-300 rounded-md text-heading">
-              <li className="flex items-center justify-between">
-                {t('text-order')}
-                <span className="font-normal">
-                  <Link
-                    href="/my-account/orders/3204"
-                    className="underline hover:no-underline text-body"
-                  >
-                    #3204
-                  </Link>
-                </span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-date')}
-                <span className="font-normal">March 18, 2021</span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-status')}
-                <span className="font-normal">Completed</span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-total')}
-                <span className="font-normal">$16,950.00 for 93 items</span>
-              </li>
-              <li className="flex items-center justify-between">
-                {t('text-actions')}
-                <span className="font-normal">
-                  <Link
-                    href="/my-account/orders/3204"
-                    className="text-sm leading-4 bg-heading text-white px-4 py-2.5 inline-block rounded-md hover:text-white hover:bg-gray-600"
-                  >
-                    {t('button-view')}
-                  </Link>
-                </span>
-              </li>
-            </ul>
+            {orders.map(order => (
+              <ul className="flex flex-col px-4 pt-5 pb-6 space-y-5 text-sm font-semibold border border-gray-300 rounded-md text-heading" key={order._id}>
+                <li className="flex items-center justify-between">
+                  {t('text-order')}
+                  <span className="font-normal">
+                    <Link
+                      href={`/my-account/orders/${order._id}`}
+                      className="underline hover:no-underline text-body"
+                    >
+                      #{order._id}
+                    </Link>
+                  </span>
+                </li>
+                <li className="flex items-center justify-between">
+                  {t('text-date')}
+                  <span className="font-normal">{new Date(order.createdAt).toLocaleDateString()}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  {t('text-status')}
+                  <span className="font-normal">{order.status}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  {t('text-total')}
+                  <span className="font-normal">${order.totalPrice.toFixed(2)} for {order.products.length} items</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  {t('text-actions')}
+                  <span className="font-normal">
+                    <Link
+                      href={`/my-account/orders/${order._id}`}
+                      className="text-sm leading-4 bg-heading text-white px-4 py-2.5 inline-block rounded-md hover:text-white hover:bg-gray-600"
+                    >
+                      {t('button-view')}
+                    </Link>
+                  </span>
+                </li>
+              </ul>
+            ))}
           </div>
         )}
       </motion.div>
