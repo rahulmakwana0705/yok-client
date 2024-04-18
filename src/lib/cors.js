@@ -9,5 +9,5 @@ export default function corsMiddleware(req, res, next) {
         return;
     }
 
-    next(); // Continue to the next middleware or the actual route handler
+    next();
 }
