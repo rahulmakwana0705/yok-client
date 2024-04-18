@@ -19,7 +19,7 @@ export default async function handler(req, res) {
                 });
             } else if (req.query.userid) {
                 // If userid is provided in the query parameter, filter orders by userid
-                orders = await Order.find({ userid: req.query.userid });
+                orders = await Order.find({ user: req.query.userid });
             } else {
                 // If neither orderid nor userid is provided, return all orders
                 orders = await Order.find({});

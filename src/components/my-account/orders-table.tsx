@@ -6,7 +6,6 @@ import { useTranslation } from 'next-i18next';
 import { useSsrCompatible } from '@utils/use-ssr-compatible';
 
 const OrdersTable: React.FC<{ orders: Order[] }> = ({ orders }) => {
-  console.log(orders)
   const { width } = useSsrCompatible(useWindowSize(), { width: 0, height: 0 });
   const { t } = useTranslation('common');
 

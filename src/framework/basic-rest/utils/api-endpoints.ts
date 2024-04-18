@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
   SHOP: '/shop.json',
   SEARCH: '/search.json',
   ORDERS: 'order/get',
+  GET_USER_ORDERS: (id: string) => `order/get?userid=${id}`,
   GET_ORDER: (id: string) => `/order/get?orderid=${id}`,
   CREATE_ORDER: '/order/create',
   VERIFY_ORDER: '/order/verify',
