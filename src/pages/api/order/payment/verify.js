@@ -1,5 +1,5 @@
-import connectToDatabase from '../../../lib/mongodb';
-import { getRazorpayInstance } from '../../../lib/razorPay-config';
+import connectToDatabase from '../../../../lib/mongodb';
+import { getRazorpayInstance } from '../../../../lib/razorPay-config';
 import crypto from "crypto";
 
 connectToDatabase();

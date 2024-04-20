@@ -28,12 +28,11 @@ interface CheckoutInputType {
   response: object;
 }
 
-var userData;
+let currentUserData;
 const authToken = Cookies.get("token");
 if (authToken) {
-  userData = JSON.parse(authToken);
+  currentUserData = JSON.parse(authToken);
 }
-
 const CheckoutForm: React.FC = () => {
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<string>("online");
@@ -70,13 +69,14 @@ const CheckoutForm: React.FC = () => {
     const { data: razorpayKeys } = await http.get(
       API_ENDPOINTS.GET_RAZORPAYKEYS
     );
-    const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, inputData);
+    inputData.totalPrice = total;
+    const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER_PAYMENT, inputData);
     console.log(data);
     if (selectedOption === "online") {
       if (data.success) {
         var options = {
           key: razorpayKeys.keys.key,
-          amount: "50000",
+          amount: data.order.amount,
           currency: "INR",
           name: "YOK",
           description: "Test Transaction",
@@ -85,7 +85,8 @@ const CheckoutForm: React.FC = () => {
           order_id: data.order.id,
           handler: function (response: any) {
             console.log(response);
-            updateUser({ ...input, response });
+            onPaymentSuccess({ input, response });
+            // updateUser({ ...input, response });
           },
           prefill: {
             name: "John doe",
@@ -112,70 +113,97 @@ const CheckoutForm: React.FC = () => {
         });
       }
     }
-    if (!isEmpty) {
-      console.log("updateUser", updateUser);
-      console.log("Test payment button clicked!");
-      const { data: razorpayKeys } = await http.get(
-        API_ENDPOINTS.GET_RAZORPAYKEYS
-      );
-      const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {
-        user: userData?._id,
-        products: allProduct,
-        totalPrice: total,
-        tracking_number: 0,
-        shippingAddress: input,
-        status: "pending",
-        paymentMethod: selectedOption,
-        paymentStatus: "pending",
-        transactionId: "",
-      });
-      console.log(data);
-      if (data.success) {
-        var options = {
-          key: razorpayKeys.keys.key,
-          amount: "50000",
-          currency: "INR",
-          name: "YOK",
-          description: "Test Transaction",
-          image:
-            "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
-          order_id: data.order.id,
-          handler: function (response: any) {
-            console.log(response);
-            updateUser({ ...input, response });
-          },
-          prefill: {
-            name: "John doe",
-            email: "johndoe@gmail.com",
-            contact: "9999999999",
-          },
-          notes: {
-            test: "This is test function",
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-        var rzp1 = new window.Razorpay(options);
-        rzp1.open();
-        rzp1.on("payment.failed", function (response: any) {
-          alert(response.error.code);
-          alert(response.error.description);
-          alert(response.error.source);
-          alert(response.error.step);
-          alert(response.error.reason);
-          alert(response.error.metadata.order_id);
-          alert(response.error.metadata.payment_id);
-        });
-      }
-      updateUser(input);
-    }
+    // if (!isEmpty) {
+    //   console.log("updateUser", updateUser);
+    //   console.log("Test payment button clicked!");
+    //   const { data: razorpayKeys } = await http.get(
+    //     API_ENDPOINTS.GET_RAZORPAYKEYS
+    //   );
+    //   const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER_PAYMENT, {
+    //     user: userData?._id,
+    //     products: allProduct,
+    //     totalPrice: total,
+    //     tracking_number: 0,
+    //     shippingAddress: input,
+    //     status: "pending",
+    //     paymentMethod: selectedOption,
+    //     paymentStatus: "pending",
+    //     transactionId: "",
+    //   });
+    //   console.log(data);
+    //   if (data.success) {
+    //     var options = {
+    //       key: razorpayKeys.keys.key,
+    //       amount: "50000",
+    //       currency: "INR",
+    //       name: "YOK",
+    //       description: "Test Transaction",
+    //       image:
+    //         "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
+    //       order_id: data.order.id,
+    //       handler: function (response: any) {
+    //         console.log(response);
+    //         updateUser({ ...input, response });
+    //       },
+    //       prefill: {
+    //         name: "John doe",
+    //         email: "johndoe@gmail.com",
+    //         contact: "9999999999",
+    //       },
+    //       notes: {
+    //         test: "This is test function",
+    //       },
+    //       theme: {
+    //         color: "#3399cc",
+    //       },
+    //     };
+    //     var rzp1 = new window.Razorpay(options);
+    //     rzp1.open();
+    //     rzp1.on("payment.failed", function (response: any) {
+    //       alert(response.error.code);
+    //       alert(response.error.description);
+    //       alert(response.error.source);
+    //       alert(response.error.step);
+    //       alert(response.error.reason);
+    //       alert(response.error.metadata.order_id);
+    //       alert(response.error.metadata.payment_id);
+    //     });
+    //   }
+    //   updateUser(input);
+    // }
 
     // Router.push(ROUTES.ORDER);
   }
-  function onPaymentSuccess(response: CheckoutInputType) {
+  async function onPaymentSuccess(response: CheckoutInputType) {
     console.log(response);
-    updateUser({ ...data, response });
+    const { response: PaymentVerification, input: userData } = response
+
+    // verify this payment
+    const { data } = await http.post(API_ENDPOINTS.VERIFY_ORDER_PAYMENT, PaymentVerification);
+    console.log(data)
+    if (data.success) {
+      // save order in db
+      console.log(userData)
+
+      const allProduct = items.map((product) => ({
+        product: product._id,
+        quantity: product?.quantity || 0,
+      }));
+
+      const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {
+        user: currentUserData?._id,
+        products: allProduct,
+        totalPrice: total,
+        tracking_number: 0,
+        userData: userData,
+        status: "pending",
+        paymentMethod: selectedOption,
+        paymentStatus: "pending",
+        transactionId: PaymentVerification.razorpay_payment_id,
+      });
+    }
+    console.log(data)
+    alert("order created")
     // Router.push(ROUTES.ORDER);
   }
   // New Function to Handle Test Payment
