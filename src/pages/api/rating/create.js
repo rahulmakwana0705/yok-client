@@ -9,13 +9,13 @@ export default async function handler(req, res) {
     await corsMiddleware(req, res, async () => {
         if (req.method === 'POST') {
             try {
-                const { message, name, email, rating } = req.body;
+                const { message, name, email, rating, productId, productName, userId, userName, userEmail } = req.body;
 
                 if (rating < 1 || rating > 5) {
                     return res.status(400).json({ error: 'Invalid rating. Rating must be an integer between 1 and 5.' });
                 }
 
-                const newRating = new Rating({ message, name, email, rating });
+                const newRating = new Rating({ message, name, email, rating, productId, productName, userId, userName, userEmail });
                 await newRating.save();
 
                 res.status(201).json({ message: 'Rating saved successfully', rating: newRating });

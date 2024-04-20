@@ -13,6 +13,11 @@ try {
             type: Number,
             required: true,
         },
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+        productName: { type: String, required: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+        userName: { type: String, required: true },
+        userEmail: { type: String, required: true }
     }, { timestamps: true });
     Rating = mongoose.model('Rating', ratingSchema);
 }

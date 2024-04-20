@@ -23,7 +23,7 @@ if (authToken) {
   console.log("userData", userData);
 }
 
-const ReviewForm: React.FC = () => {
+const ReviewForm: React.FC = ({ productData }) => {
   const {
     register,
     handleSubmit,
@@ -45,6 +45,11 @@ const ReviewForm: React.FC = () => {
       name: values?.name,
       email: values?.email,
       rating: rating,
+      productId: productData?._id,
+      productName: productData?.name,
+      userId: userData._id,
+      userName: userData.name,
+      userEmail: userData.email,
     };
 
     fetch(`${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/rating/create`, {
