@@ -35,7 +35,7 @@ export const API_ENDPOINTS = {
   ORDERS: 'order/get',
   GET_USER_ORDERS: (id: string) => `order/get?userid=${id}`,
   GET_ORDER: (id: string) => `/order/get?orderid=${id}`,
-  CREATE_ORDER_PAYMENT: '/order/payment/create',
+  CREATE_ORDER_PAYMENT: '/order/phonepay/create',
   CREATE_ORDER: '/order/create',
   VERIFY_ORDER_PAYMENT: '/order/payment/verify',
   GET_RAZORPAYKEYS: '/razorpay/getKeys',

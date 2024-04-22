@@ -71,7 +71,12 @@ const CheckoutForm: React.FC = () => {
     );
     inputData.totalPrice = total;
     const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER_PAYMENT, inputData);
-    console.log(data);
+    console.log(data.res.success);
+    if (data.res.success) {
+      console.log(data.res.data.instrumentResponse.redirectInfo.url)
+      Router.push(data.res.data.instrumentResponse.redirectInfo.url)
+      return
+    }
     if (selectedOption === "online") {
       if (data.success) {
         var options = {
@@ -349,13 +354,12 @@ const CheckoutForm: React.FC = () => {
             >
               {t("common:button-place-order")}
             </Button>
-
             <Button
               onClick={(e) => {
                 handleTestPayment(e);
               }}
             >
-              Test
+              Phonepay Payment
             </Button>
           </div>
         </div>
