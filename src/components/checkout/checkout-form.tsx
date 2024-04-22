@@ -354,13 +354,13 @@ const CheckoutForm: React.FC = () => {
             >
               {t("common:button-place-order")}
             </Button>
-            <Button
+            {/* <Button
               onClick={(e) => {
                 handleTestPayment(e);
               }}
             >
               Phonepay Payment
-            </Button>
+            </Button> */}
           </div>
         </div>
       </form>
