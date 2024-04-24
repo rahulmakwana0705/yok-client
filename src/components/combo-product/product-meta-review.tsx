@@ -17,7 +17,7 @@ const ProductMetaReview: React.FC<Props> = ({ data }) => {
 					title={item.title}
 					translatorNS="review"
 					content={
-						data?.meta.length === item.id ? (
+						data?.meta?.length === item.id ? (
 							<>
 								{item.content} <ReviewForm />
 							</>

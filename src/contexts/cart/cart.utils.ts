@@ -77,4 +77,4 @@ export const calculateTotal = (items: Item[]) =>
 export const calculateTotalItems = (items: Item[]) =>
   items.reduce((sum, item) => sum + item.quantity!, 0);
 
-export const calculateUniqueItems = (items: Item[]) => items.length;
+export const calculateUniqueItems = (items: Item[]) => items?.length;

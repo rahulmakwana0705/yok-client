@@ -100,10 +100,10 @@ const Carousel: React.FunctionComponent<CarouselPropsType> = ({
         navigation={
           navigation
             ? {
-              prevEl: prevActivateId.length
+              prevEl: prevActivateId?.length
                 ? `#${prevActivateId}`
                 : prevRef.current!, // Assert non-null
-              nextEl: nextActivateId.length
+              nextEl: nextActivateId?.length
                 ? `#${nextActivateId}`
                 : nextRef.current!, // Assert non-null
             }

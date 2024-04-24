@@ -17,106 +17,106 @@ import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 
 const AuthMenu = dynamic(() => import("./auth-menu"), { ssr: false });
 const CartButton = dynamic(() => import("@components/cart/cart-button"), {
-  ssr: false,
+	ssr: false,
 });
 
 type DivElementRef = React.MutableRefObject<HTMLDivElement>;
 const { site_header } = siteSettings;
 const Header: React.FC = () => {
-  const { openSearch, openModal, setModalView, isAuthorized } = useUI();
-  const { t } = useTranslation("common");
-  const siteHeaderRef = useRef() as DivElementRef;
-  addActiveScroll(siteHeaderRef);
+	const { openSearch, openModal, setModalView, isAuthorized } = useUI();
+	const { t } = useTranslation("common");
+	const siteHeaderRef = useRef() as DivElementRef;
+	addActiveScroll(siteHeaderRef);
 
-  function handleLogin() {
-    setModalView("LOGIN_VIEW");
-    return openModal();
-  }
+	function handleLogin() {
+		setModalView("LOGIN_VIEW");
+		return openModal();
+	}
 
-  const { addItemToCart } = useCart();
-  useEffect(() => {
-    const loadCartData = async () => {
-      try {
-        const response = await axios.get("/api/add-to-cart/get");
-        console.log("response cart", response);
-        console.log("response cart", response?.data?.cartItems);
-        response?.data?.cartItems.map((item) => {
-          addItemToCart(item, item.quantity);
-        });
-      } catch (error) {
-        console.log("error on get cart", error);
-      }
-    };
-    loadCartData();
-  }, []);
+	const { addItemToCart } = useCart();
+	useEffect(() => {
+		const loadCartData = async () => {
+			try {
+				const response = await axios.get("/api/add-to-cart/get");
+				console.log("response cart", response);
+				console.log("response cart", response?.data?.cartItems);
+				response?.data?.cartItems.map((item) => {
+					addItemToCart(item, item.quantity);
+				});
+			} catch (error) {
+				console.log("error on get cart", error);
+			}
+		};
+		loadCartData();
+	}, []);
 
-  const [catogoriesData, SetCatogoriesData] = useState([]);
+	const [catogoriesData, SetCatogoriesData] = useState([]);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data: categoryData } = await http.get(
-          API_ENDPOINTS.GET_SUBCATEGORIES
-        );
-        console.log(categoryData.CategoryMenu);
-        SetCatogoriesData(categoryData.CategoryMenu);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const { data: categoryData } = await http.get(
+					API_ENDPOINTS.GET_SUBCATEGORIES
+				);
+				console.log(categoryData.CategoryMenu);
+				SetCatogoriesData(categoryData.CategoryMenu);
+			} catch (error) {
+				console.error("Error fetching categories:", error);
+			}
+		};
 
-    fetchCategories();
-  }, []);
+		fetchCategories();
+	}, []);
 
-  return (
-    <header
-      id="siteHeader"
-      ref={siteHeaderRef}
-      className="relative z-20 w-full h-16 sm:h-20 lg:h-24"
-    >
-      <div className="fixed z-20 w-full h-16 px-4 text-gray-700 transition duration-200 ease-in-out bg-white innerSticky body-font sm:h-20 lg:h-24 md:px-8 lg:px-6">
-        <div className="flex items-center justify-center mx-auto max-w-[1920px] h-full w-full">
-          <Logo />
+	return (
+		<header
+			id="siteHeader"
+			ref={siteHeaderRef}
+			className="relative z-20 w-full h-16 sm:h-20 lg:h-24"
+		>
+			<div className="fixed z-20 w-full h-16 px-4 text-gray-700 transition duration-200 ease-in-out bg-white innerSticky body-font sm:h-20 lg:h-24 md:px-8 lg:px-6">
+				<div className="flex items-center justify-center mx-auto max-w-[1920px] h-full w-full">
+					<Logo />
 
-          <HeaderMenu
-            // data={site_header.menu}
-            data={catogoriesData}
-            className="hidden lg:flex ltr:md:ml-6 rtl:md:mr-6 ltr:xl:ml-10 rtl:xl:mr-10"
-          />
+					<HeaderMenu
+						// data={site_header.menu}
+						data={catogoriesData}
+						className="hidden lg:flex ltr:md:ml-6 rtl:md:mr-6 ltr:xl:ml-10 rtl:xl:mr-10"
+					/>
 
-          <div className="flex-shrink-0 ltr:ml-auto rtl:mr-auto ltr:lg:mr-5 rtl:lg:ml-5 ltr:xl:mr-8 rtl:xl:ml-8 ltr:2xl:mr-10 rtl:2xl:ml-10">
-            <LanguageSwitcher />
-          </div>
-          <div className="items-center justify-end flex-shrink-0 hidden lg:flex gap-x-6 lg:gap-x-5 xl:gap-x-8 2xl:gap-x-10 ltr:ml-auto rtl:mr-auto">
-            <button
-              className="relative flex items-center justify-center flex-shrink-0 h-auto transform focus:outline-none"
-              onClick={openSearch}
-              aria-label="search-button"
-            >
-              <SearchIcon />
-            </button>
-            <div className="-mt-0.5 flex-shrink-0">
-              <AuthMenu
-                isAuthorized={isAuthorized}
-                href={ROUTES.ACCOUNT}
-                className="text-sm font-semibold xl:text-base text-heading"
-                btnProps={{
-                  className:
-                    "text-sm xl:text-base text-heading font-semibold focus:outline-none",
-                  // @ts-ignore
-                  children: t("text-sign-in"),
-                  onClick: handleLogin,
-                }}
-              >
-                {t("text-account")}
-              </AuthMenu>
-            </div>
-            <CartButton />
-          </div>
-        </div>
-      </div>
-    </header>
-  );
+					<div className="flex-shrink-0 ltr:ml-auto rtl:mr-auto ltr:lg:mr-5 rtl:lg:ml-5 ltr:xl:mr-8 rtl:xl:ml-8 ltr:2xl:mr-10 rtl:2xl:ml-10">
+						<LanguageSwitcher />
+					</div>
+					<div className="items-center justify-end flex-shrink-0 hidden lg:flex gap-x-6 lg:gap-x-5 xl:gap-x-8 2xl:gap-x-10 ltr:ml-auto rtl:mr-auto">
+						<button
+							className="relative flex items-center justify-center flex-shrink-0 h-auto transform focus:outline-none"
+							onClick={openSearch}
+							aria-label="search-button"
+						>
+							<SearchIcon />
+						</button>
+						<div className="-mt-0.5 flex-shrink-0">
+							<AuthMenu
+								isAuthorized={isAuthorized}
+								href={ROUTES.ACCOUNT}
+								className="text-sm font-semibold xl:text-base text-heading"
+								btnProps={{
+									className:
+										"text-sm xl:text-base text-heading font-semibold focus:outline-none",
+									// @ts-ignore
+									children: t("text-sign-in"),
+									onClick: handleLogin,
+								}}
+							>
+								{t("text-account")}
+							</AuthMenu>
+						</div>
+						<CartButton />
+					</div>
+				</div>
+			</div>
+		</header>
+	);
 };
 
 export default Header;
