@@ -24,6 +24,12 @@ export default async function handler(req, res) {
 
                 // Access form data
                 const { name, image, userId } = req.body;
+
+                if (!userId) {
+                    return res.status(400).json({ message: 'Please provide user id' });
+                }
+
+
                 const imageFile = req.files['image'] ? req.files['image'][0] : null;
 
                 // Check if both name and image are provided
