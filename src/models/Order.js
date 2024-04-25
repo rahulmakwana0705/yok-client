@@ -25,7 +25,7 @@ try {
             type: Number,
             required: true
         },
-        tracking_number: { type: String, required: true },
+        tracking_number: { type: String },
         shippingAddress: {
             firstName: {
                 type: String,
