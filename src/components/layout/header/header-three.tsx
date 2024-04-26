@@ -10,12 +10,13 @@ import { addActiveScroll } from "@utils/add-active-scroll";
 import dynamic from "next/dynamic";
 import { useTranslation } from "next-i18next";
 import LanguageSwitcher from "@components/ui/language-switcher";
-import WishButton from "@components/ui/wish-button";
+// import WishButton from "@components/ui/wish-button";
 import { UserLineIcon } from "@components/icons/UserLineIcon";
 import Link from "@components/ui/link";
 import CategoryMenu from "@components/ui/category-menu";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
 import http from "@framework/utils/http";
+// import { Listbox, Transition } from "@headlessui/react";
 
 const AuthMenu = dynamic(() => import("@components/layout/header/auth-menu"), {
 	ssr: false,
@@ -162,20 +163,38 @@ export default function Header() {
 					</div>
 
 					<div className="flex items-center flex-shrink-0 ltr:ml-auto rtl:mr-auto gap-x-7">
-						<AuthMenu
-							isAuthorized={isAuthorized}
-							href={ROUTES.ACCOUNT}
-							className="flex-shrink-0 hidden text-sm xl:text-base lg:flex focus:outline-none text-heading gap-x-3"
-							btnProps={{
-								children: (
-									<>
-										<UserLineIcon className="w-4 xl:w-[17px] h-auto text-black" />
-										{t("text-login")}
-									</>
-								),
-								onClick: handleLogin,
-							}}
-						/>
+						{!isAuthorized ? (
+							<AuthMenu
+								isAuthorized={isAuthorized}
+								href={ROUTES.ACCOUNT}
+								className="flex-shrink-0 hidden text-sm xl:text-base lg:flex focus:outline-none text-heading gap-x-3"
+								btnProps={{
+									children: (
+										<>
+											<UserLineIcon className="w-4 xl:w-[17px] h-auto text-black" />
+											{t("text-login")}
+										</>
+									),
+									onClick: handleLogin,
+								}}
+							/>
+						) : (
+							<AuthMenu
+								isAuthorized={!isAuthorized}
+								href={ROUTES.MYACCOUNT}
+								className="flex-shrink-0 hidden text-sm xl:text-base lg:flex focus:outline-none text-heading gap-x-3"
+								btnProps={{
+									children: (
+										<>
+											<Link href={ROUTES.MYACCOUNT} className="flex gap-2">
+												<UserLineIcon className="w-4 xl:w-[17px] h-auto text-black" />
+												{t("My Account")}
+											</Link>
+										</>
+									),
+								}}
+							/>
+						)}
 						<LanguageSwitcher />
 					</div>
 				</div>

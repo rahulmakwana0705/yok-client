@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import SearchIcon from "@components/icons/search-icon";
-import { siteSettings } from "@settings/site-settings";
+// import { siteSettings } from "@settings/site-settings";
 import HeaderMenu from "@components/layout/header/header-menu";
 import Logo from "@components/ui/logo";
 import { useUI } from "@contexts/ui.context";
@@ -21,7 +21,7 @@ const CartButton = dynamic(() => import("@components/cart/cart-button"), {
 });
 
 type DivElementRef = React.MutableRefObject<HTMLDivElement>;
-const { site_header } = siteSettings;
+// const { site_header } = siteSettings;
 const Header: React.FC = () => {
 	const { openSearch, openModal, setModalView, isAuthorized } = useUI();
 	const { t } = useTranslation("common");
@@ -40,7 +40,7 @@ const Header: React.FC = () => {
 				const response = await axios.get("/api/add-to-cart/get");
 				console.log("response cart", response);
 				console.log("response cart", response?.data?.cartItems);
-				response?.data?.cartItems.map((item) => {
+				response?.data?.cartItems.map((item: any) => {
 					addItemToCart(item, item.quantity);
 				});
 			} catch (error) {
