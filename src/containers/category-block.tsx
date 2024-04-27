@@ -32,26 +32,32 @@ const CategoryBlock: React.FC<CategoriesProps> = ({
 	const breakpoints = {
 		"1720": {
 			slidesPerView: roundedItemCount === 5 ? 5 : 8,
+			slidesPerGroupSkip: 1,
 			spaceBetween: roundedSpaceBetween || 28,
 		},
 		"1400": {
 			slidesPerView: roundedItemCount === 5 ? 5 : 7,
+			slidesPerGroupSkip: 1,
 			spaceBetween: roundedSpaceBetween || 28,
 		},
 		"1024": {
 			slidesPerView: roundedItemCount === 5 ? 4 : 6,
+			slidesPerGroupSkip: 1,
 			spaceBetween: roundedSpaceBetween || 20,
 		},
 		"768": {
 			slidesPerView: roundedItemCount === 5 ? 3 : 5,
+			slidesPerGroupSkip: 1,
 			spaceBetween: roundedSpaceBetween || 20,
 		},
 		"500": {
 			slidesPerView: roundedItemCount === 5 ? 2 : 4,
+			slidesPerGroupSkip: 1,
 			spaceBetween: roundedSpaceBetween || 12,
 		},
 		"0": {
 			slidesPerView: roundedItemCount === 5 ? 2 : 3,
+			slidesPerGroupSkip: 1,
 			spaceBetween: roundedSpaceBetween || 12,
 		},
 	};
@@ -59,26 +65,32 @@ const CategoryBlock: React.FC<CategoriesProps> = ({
 	const breakpointsCircle = {
 		"1720": {
 			slidesPerView: 8,
+			slidesPerGroupSkip: 1,
 			spaceBetween: 48,
 		},
 		"1400": {
 			slidesPerView: 7,
+			slidesPerGroupSkip: 1,
 			spaceBetween: 32,
 		},
 		"1025": {
 			slidesPerView: 6,
+			slidesPerGroupSkip: 1,
 			spaceBetween: 28,
 		},
 		"768": {
 			slidesPerView: 5,
+			slidesPerGroupSkip: 1,
 			spaceBetween: 20,
 		},
 		"500": {
 			slidesPerView: 4,
+			slidesPerGroupSkip: 1,
 			spaceBetween: 20,
 		},
 		"0": {
 			slidesPerView: 3,
+			slidesPerGroupSkip: 1,
 			spaceBetween: 12,
 		},
 	};

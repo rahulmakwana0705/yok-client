@@ -36,9 +36,11 @@ import { useUI } from "@contexts/ui.context";
 const productGalleryCarouselResponsive = {
 	"768": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 	},
 	"0": {
 		slidesPerView: 1,
+		slidesPerGroupSkip: 1,
 	},
 };
 
@@ -273,7 +275,7 @@ export default function ProductPage() {
 
 		reader.readAsDataURL(uploadedImage);
 	};
-	
+
 	console.log("uploadedImageUrl", uploadedImageUrl);
 
 	const { price, basePrice, discount } = usePrice(

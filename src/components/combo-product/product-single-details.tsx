@@ -20,9 +20,11 @@ import { useSsrCompatible } from "@utils/use-ssr-compatible";
 const productGalleryCarouselResponsive = {
 	"768": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 	},
 	"0": {
 		slidesPerView: 1,
+		slidesPerGroupSkip: 1,
 	},
 };
 
@@ -204,7 +206,7 @@ const ProductSingleDetails: React.FC = () => {
 								{data?.category?.name}
 							</Link>
 						</li>
-						{data?.tags && Array.isArray(data.tags) && (
+						{data?.tags && Array.isArray(data?.tags) && (
 							<li className="productTags">
 								<span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
 									Tags:

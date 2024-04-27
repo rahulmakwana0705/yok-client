@@ -18,10 +18,11 @@ interface Metadata {
 
 type Action =
 	| { type: "ADD_ITEM_WITH_QUANTITY"; item: Item; quantity: number }
-	| { type: "REMOVE_ITEM_OR_QUANTITY"; id: Item["id"]; quantity?: number }
+	| { type: "REMOVE_ITEM_OR_QUANTITY"; id: Item["_id"]; quantity?: number }
 	| { type: "ADD_ITEM"; id: Item["id"]; item: Item }
 	| { type: "UPDATE_ITEM"; id: Item["id"]; item: UpdateItemInput }
 	| { type: "REMOVE_ITEM"; id: Item["id"] }
+	| { type: "SET_DISCOUNT_AMOUNT"; amount: number }
 	| { type: "RESET_CART" };
 
 export interface State {
@@ -31,6 +32,7 @@ export interface State {
 	totalUniqueItems: number;
 	total: number;
 	meta?: Metadata | null;
+	discount: number | 0;
 }
 export const initialState: State = {
 	items: [],
@@ -39,7 +41,9 @@ export const initialState: State = {
 	totalUniqueItems: 0,
 	total: 0,
 	meta: null,
+	discount: 0,
 };
+
 export function cartReducer(state: State, action: Action): State {
 	switch (action.type) {
 		case "ADD_ITEM_WITH_QUANTITY": {
@@ -51,12 +55,7 @@ export function cartReducer(state: State, action: Action): State {
 			return generateFinalState(state, items);
 		}
 		case "REMOVE_ITEM_OR_QUANTITY": {
-			const items = removeItemOrQuantity(
-				state.items,
-				action.id,
-				action.quantity || 1
-			).filter((item) => item.quantity && item.quantity > 0); // Filter out items with quantity <= 0
-			console.log("Items :: ", items);
+			const items = removeItemOrQuantity(state.items, action.id, 1);
 			return generateFinalState(state, items);
 		}
 
@@ -65,12 +64,22 @@ export function cartReducer(state: State, action: Action): State {
 			return generateFinalState(state, items);
 		}
 		case "REMOVE_ITEM": {
+			console.log("action.id ", action.id);
 			const items = removeItem(state.items, action.id);
 			return generateFinalState(state, items);
 		}
 		case "UPDATE_ITEM": {
 			const items = updateItem(state.items, action.id, action.item);
 			return generateFinalState(state, items);
+		}
+		case "UPDATE_ITEM": {
+			const items = updateItem(state.items, action.id, action.item);
+			return generateFinalState(state, items);
+		}
+		case "SET_DISCOUNT_AMOUNT": {
+			console.log("Discount Amount in State :: ", action.amount);
+			console.log("Discount Amount in State :: ", state);
+			return { ...state, discount: action.amount };
 		}
 		case "RESET_CART":
 			return initialState;

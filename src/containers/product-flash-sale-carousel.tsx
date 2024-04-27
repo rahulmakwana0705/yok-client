@@ -15,22 +15,27 @@ interface ProductsProps {
 const breakpoints = {
 	"1500": {
 		slidesPerView: 5,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 28,
 	},
 	"1025": {
 		slidesPerView: 4,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 20,
 	},
 	"768": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 20,
 	},
 	"480": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"0": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 };
@@ -45,7 +50,10 @@ const ProductsFlashSaleCarousel: React.FC<ProductsProps> = ({
 	return (
 		<div className={`${className} 2xl:pt-2`}>
 			<div className="flex justify-between items-center flex-wrap mb-5 md:mb-6">
-				<SectionHeader sectionHeading={sectionHeading} className="mb-0" />
+				<SectionHeader
+					sectionHeading={sectionHeading}
+					className="mb-0"
+				/>
 			</div>
 			{error ? (
 				<Alert message={error?.message} />

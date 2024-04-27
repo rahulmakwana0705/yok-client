@@ -30,13 +30,16 @@ const banner = {
 const flashSaleCarouselBreakpoint = {
 	"1280": {
 		slidesPerView: 1,
+		slidesPerGroupSkip: 1,
 	},
 	"768": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 20,
 	},
 	"0": {
 		slidesPerView: 1,
+		slidesPerGroupSkip: 1,
 	},
 };
 

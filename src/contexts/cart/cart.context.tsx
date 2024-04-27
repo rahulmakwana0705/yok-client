@@ -9,6 +9,7 @@ interface CartProviderState extends State {
 	// updateItemQuantity: (id: Item["id"], quantity: number) => void;
 	clearItemFromCart: (id: Item["id"]) => void;
 	getItemFromCart: (id: Item["id"]) => any | undefined;
+	addDiscountToState: (amount: number) => any;
 	isInCart: (id: Item["id"]) => boolean;
 	// updateCartMetadata: (metadata: Metadata) => void;
 }
@@ -31,23 +32,26 @@ export const CartProvider: React.FC = (props) => {
 		`chawkbazar-cart`,
 		JSON.stringify(initialState)
 	);
+	console.log("Saved Cart:", savedCart); // Log saved cart value
 	const [state, dispatch] = React.useReducer(
 		cartReducer,
 		JSON.parse(savedCart!)
 	);
-
 	// React.useEffect(() => {
 	//   saveCart(JSON.stringify(state));
 	// }, [state, saveCart]);
 
 	const addItemToCart = (item: Item, quantity: number) =>
 		dispatch({ type: "ADD_ITEM_WITH_QUANTITY", item, quantity });
-	const removeItemFromCart = (id: Item["id"]) =>
+	const removeItemFromCart = (id: Item["_id"]) =>
 		dispatch({ type: "REMOVE_ITEM_OR_QUANTITY", id });
-	const clearItemFromCart = (id: Item["id"]) =>
+	const clearItemFromCart = (id: Item["_id"]) =>
 		dispatch({ type: "REMOVE_ITEM", id });
-	const isInCart = (id: Item["id"]) => !!getItem(state.items, id);
-	const getItemFromCart = (id: Item["id"]) => getItem(state.items, id);
+	const addDiscountToState = (amount: number) => {
+		dispatch({ type: "SET_DISCOUNT_AMOUNT", amount });
+	};
+	const isInCart = (id: Item["_id"]) => !!getItem(state.items, id);
+	const getItemFromCart = (id: Item["_id"]) => getItem(state.items, id);
 	// const inStock=()=>{}
 	const value = React.useMemo(
 		() => ({
@@ -56,6 +60,7 @@ export const CartProvider: React.FC = (props) => {
 			removeItemFromCart,
 			clearItemFromCart,
 			getItemFromCart,
+			addDiscountToState,
 			isInCart,
 		}),
 		[state]

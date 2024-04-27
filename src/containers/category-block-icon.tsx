@@ -19,52 +19,64 @@ interface CategoriesProps {
 const breakpoints = {
 	"1780": {
 		slidesPerView: 7,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"1280": {
 		slidesPerView: 6,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"1025": {
 		slidesPerView: 5,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"768": {
 		slidesPerView: 4,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"480": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"0": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 };
 const breakpointsCircle = {
 	"1720": {
 		slidesPerView: 8,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 48,
 	},
 	"1400": {
 		slidesPerView: 7,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 32,
 	},
 	"1025": {
 		slidesPerView: 6,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 28,
 	},
 	"768": {
 		slidesPerView: 5,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 20,
 	},
 	"500": {
 		slidesPerView: 4,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 20,
 	},
 	"0": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 };
@@ -72,26 +84,32 @@ const breakpointsCircle = {
 const breakpointsList = {
 	"1780": {
 		slidesPerView: 5,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"1280": {
 		slidesPerView: 4,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"1025": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"768": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"480": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"0": {
 		slidesPerView: 1.3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 };

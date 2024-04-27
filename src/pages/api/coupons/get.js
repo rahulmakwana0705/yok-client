@@ -11,7 +11,6 @@ export default async function handler(req, res) {
             try {
                 // Retrieve all coupon data from the database
                 const coupons = await Coupon.find({});
-
                 res.status(200).json({ coupons });
             } catch (error) {
                 console.error('Error retrieving coupon data:', error);

@@ -11,20 +11,25 @@ interface HeroGridProps {
 const breakpoints = {
 	"1720": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"1366": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 		spaceBetween: 12,
 	},
 	"1025": {
 		slidesPerView: 3,
+		slidesPerGroupSkip: 1,
 	},
 	"768": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
 	},
 	"0": {
 		slidesPerView: 1,
+		slidesPerGroupSkip: 1,
 	},
 };
 

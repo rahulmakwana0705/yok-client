@@ -11,6 +11,8 @@ interface BannerProps {
 const breakpoints = {
 	"0": {
 		slidesPerView: 2,
+		slidesPerGroupSkip: 1,
+		slidesPerGroupSkip: 1,
 	},
 };
 

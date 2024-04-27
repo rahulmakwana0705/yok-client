@@ -9,6 +9,8 @@ import usePrice from "@framework/product/use-price";
 import { ROUTES } from "@utils/routes";
 import { generateCartItemName } from "@utils/generate-cart-item-name";
 import { useTranslation } from "next-i18next";
+import Cart from "./cart";
+import axios from "axios";
 
 type CartItemProps = {
 	item: any;
@@ -25,6 +27,46 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 		amount: item.itemTotal,
 		currencyCode: "USD",
 	});
+
+	const removeItemFromCartHandler = async (id: string) => {
+		try {
+			const response = await axios.patch("/api/add-to-cart/delete", {
+				id,
+			});
+			if (response) {
+				removeItemFromCart(id);
+			}
+		} catch (error) {
+			console.log("Error while removing item:", error);
+		}
+	};
+
+	const clearItemFromCartHandler = async (id: string) => {
+		try {
+			const response = await axios.delete("/api/add-to-cart/clear", {
+				data: { id },
+			});
+			if (response) {
+				clearItemFromCart(id);
+			}
+		} catch (error) {
+			console.log("Error while removing item:", error);
+		}
+	};
+
+	const addItemToCartHandler = async (item: any, quantity: number) => {
+		try {
+			const id = item._id;
+			const response = await axios.patch("/api/add-to-cart/add", {
+				id,
+			});
+			if (response) {
+				addItemToCart(item, quantity);
+			}
+		} catch (error) {
+			console.log("Error while removing item:", error);
+		}
+	};
 
 	return (
 		<motion.div
@@ -47,7 +89,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 				/>
 				<div
 					className="absolute top-0 flex items-center justify-center w-full h-full transition duration-200 ease-in-out bg-black ltr:left-0 rtl:right-0 bg-opacity-30 md:bg-opacity-0 md:group-hover:bg-opacity-30"
-					onClick={() => clearItemFromCart(item.id)}
+					onClick={() => clearItemFromCartHandler(item._id)}
 					role="button"
 				>
 					<IoIosCloseCircle className="relative text-2xl text-white transition duration-300 ease-in-out transform md:scale-0 md:opacity-0 md:group-hover:scale-100 md:group-hover:opacity-100" />
@@ -69,8 +111,8 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 				<div className="flex items-end justify-between">
 					<Counter
 						quantity={item.quantity}
-						onIncrement={() => addItemToCart(item, 1)}
-						onDecrement={() => removeItemFromCart(item.id)}
+						onIncrement={() => addItemToCartHandler(item, 1)}
+						onDecrement={() => removeItemFromCartHandler(item._id)}
 						variant="dark"
 					/>
 					<span className="text-sm font-semibold leading-5 md:text-base text-heading">
