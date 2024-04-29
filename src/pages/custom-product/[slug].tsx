@@ -8,7 +8,6 @@ import Divider from "@components/ui/divider";
 import Breadcrumb from "@components/common/breadcrumb";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { GetServerSideProps } from "next";
-import { useForm } from "react-hook-form";
 
 import Button from "@components/ui/button";
 import Counter from "@components/common/counter";
@@ -220,7 +219,7 @@ export default function ProductPage() {
 		query: { slug },
 	} = useRouter();
 
-	const { register, handleSubmit } = useForm();
+	const [nameHolder, setNameHolder] = useState("");
 
 	const { openSearch, openModal, setModalView, isAuthorized } = useUI();
 
@@ -234,16 +233,20 @@ export default function ProductPage() {
 	const { addItemToCart } = useCart();
 	const [attributes, setAttributes] = useState<{ [key: string]: string }>({});
 	const [selectedOption, setSelectedOption] = useState<string>("");
+	const [imageGallery, setImageGallery] = useState("");
 
 	const [quantity, setQuantity] = useState(1);
 	const [addToCartLoader, setAddToCartLoader] = useState<boolean>(false);
 	const [customizeTshirt, setCustomizeTshirt] = useState<boolean>(false);
 	const [selectedSide, setSelectedSide] = useState<string>("");
-	const [checkBoxValue, setCheckBoxValue] = useState<string>("");
-	const [checkedBox, setCheckedBox] = useState(null);
-	const [selectedColor, setSelectedColor] = useState(null);
+	const [customizationType, setCustomizationType] = useState<string>("");
+	const [customizePolos, setCustomizePolos] = useState<string>("");
+	const [customizeBasics, setCustomizeBasics] = useState<string>("");
+	const [checkedBox, setCheckedBox] = useState("null");
+	const [selectedColor, setSelectedColor] = useState("");
+	const [isOptionSelected, setIsOptionSelected] = useState(false);
 
-	const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
+	const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
 	useEffect(() => {
 		const loadCartData = async () => {
@@ -263,6 +266,14 @@ export default function ProductPage() {
 			loadCartData();
 		}
 	}, [slug]);
+
+	useEffect(() => {
+		if (nameHolder || uploadedImageUrl) {
+			setIsOptionSelected(true);
+		} else {
+			setIsOptionSelected(false);
+		}
+	}, [nameHolder, uploadedImageUrl]);
 
 	const handleImageUpload = (files) => {
 		// console.log("Image selected:", files);
@@ -295,6 +306,28 @@ export default function ProductPage() {
 				attributes.hasOwnProperty(variation)
 		  )
 		: true;
+
+	const createCustomProductHandler = async () => {
+		try {
+			const formData = new FormData();
+			formData.append("name", nameHolder);
+			formData.append("image", uploadedImageUrl);
+			formData.append("userId", userData?._id);
+			formData.append("color", selectedColor);
+			formData.append("side", checkedBox);
+			formData.append("customizationType", customizationType);
+			formData.append("customizePolos", customizePolos);
+			formData.append("customizeBasics", customizeBasics);
+			const response = await axios.post(
+				"/api/product/custom/create",
+				formData
+			);
+			// Assuming your API returns the created custom product in the response
+			console.log("Custom product created successfully:", response);
+		} catch (error) {
+			console.log("Error while creating custom product:", error);
+		}
+	};
 
 	function addToCart() {
 		if (!isSelected) return;
@@ -356,6 +389,7 @@ export default function ProductPage() {
 			});
 
 		console.log(item, "item");
+		createCustomProductHandler();
 	}
 
 	function handleAttribute(attribute: any) {
@@ -375,6 +409,20 @@ export default function ProductPage() {
 
 	const handleSideChange = (e) => {
 		setSelectedSide(e.target.value);
+	};
+
+	const handleCustomizePolosChange = (option: string) => {
+		// Toggle the customization option based on the checkbox selection
+		setCustomizePolos((prevOptions) =>
+			prevOptions === option ? "" : option
+		);
+	};
+
+	const handleCustomizeBasicsChange = (option: string) => {
+		// Toggle the customization option based on the checkbox selection
+		setCustomizeBasics((prevOptions) =>
+			prevOptions === option ? "" : option
+		);
 	};
 
 	const renderInputFields = () => {
@@ -411,7 +459,7 @@ export default function ProductPage() {
 
 	const handleCheckBoxChage = (inboxValue) => {
 		if (checkedBox === inboxValue) {
-			setCheckedBox(null);
+			setCheckedBox("");
 		} else {
 			setCheckedBox(inboxValue);
 		}
@@ -419,10 +467,15 @@ export default function ProductPage() {
 
 	const handleColorChange = (color) => {
 		if (selectedColor === color) {
-			setSelectedColor(null);
+			setSelectedColor("");
 		} else {
 			setSelectedColor(color);
 		}
+	};
+
+	const handleCheckboxChange = (type: string) => {
+		// Toggle the customization type based on the checkbox selection
+		setCustomizationType((prevType) => (prevType === type ? "" : type));
 	};
 
 	return (
@@ -521,7 +574,7 @@ export default function ProductPage() {
 										/>
 									)}
 								</div>
-								{uploadedImageUrl !== null && (
+								{uploadedImageUrl !== "" && (
 									<div>
 										<img
 											src={uploadedImageUrl}
@@ -531,6 +584,15 @@ export default function ProductPage() {
 										/>
 									</div>
 								)}
+								<span
+									className={`absolute inset-0 m-auto w-[30%] text-black h-12 text-center text-3xl font-bold ${
+										selectedColor === "Black"
+											? "text-white"
+											: "text-black"
+									}`}
+								>
+									{"nameHolder"}
+								</span>
 							</SwiperSlide>
 						</Carousel>
 					) : (
@@ -566,7 +628,7 @@ export default function ProductPage() {
 									/>
 								)}
 
-								{uploadedImageUrl !== null && (
+								{uploadedImageUrl !== "" && (
 									<div>
 										<img
 											src={uploadedImageUrl}
@@ -576,6 +638,16 @@ export default function ProductPage() {
 										/>
 									</div>
 								)}
+								<span
+									className={`absolute inset-0 m-auto w-[30%] text-black h-12 text-center text-3xl font-bold ${
+										selectedColor === "Black"
+											? "text-white"
+											: "text-black"
+									}`}
+									style={{ zIndex: 1 }}
+								>
+									{nameHolder}
+								</span>
 							</div>
 						</div>
 					)}
@@ -649,17 +721,16 @@ export default function ProductPage() {
 							})}
 						</div>
 						<div>
-							<h3
+							<button
 								onClick={handleTshirtStyleClick}
-								className="mt-5 cursor-pointer text-base md:text-lg text-heading font-semibold mb-2.5 capitalize"
+								className="mt-5 cursor-pointer text-base md:text-lg  font-semibold mb-2.5 capitalize bg-blue-950 text-white  px-3 py-2 rounded"
 							>
-								Create Your Style: Design Your Own Unique
-								T-Shirt!
-							</h3>
+								Design Your T-Shirt
+							</button>
 							{customizeTshirt && (
 								<div className="pb-3 mt-4 border-b border-gray-300 ">
 									<div className="mr-10 flex">
-										<h3 className="text-base mb-[0px] flex items-center mr-4 flex md:text-lg text-heading font-semibold mb-2.5 capitalize">
+										<h3 className="text-base items-center mr-4 flex md:text-lg text-heading font-semibold mb-2.5 capitalize">
 											Select Option
 										</h3>
 										<select
@@ -692,6 +763,12 @@ export default function ProductPage() {
 														className="h-10 outline-none border border-gray-300 px-3 py-2 rounded-md focus:outline-none"
 														type="text"
 														id="name"
+														value={nameHolder}
+														onChange={(e) =>
+															setNameHolder(
+																e.target.value
+															)
+														}
 													/>
 												</div>
 												<div>
@@ -734,10 +811,32 @@ export default function ProductPage() {
 												</h3>
 												<div className="flex">
 													<div className="relative flex items-center mr-10 ">
-														<CheckBox labelKey="Print" />
+														<CheckBox
+															labelKey="Print"
+															checked={
+																customizationType ===
+																"Print"
+															}
+															onChange={() =>
+																handleCheckboxChange(
+																	"Print"
+																)
+															}
+														/>
 													</div>
 													<div className="relative flex items-center ">
-														<CheckBox labelKey="Embroidered" />
+														<CheckBox
+															labelKey="Embroidered"
+															checked={
+																customizationType ===
+																"Embroidered"
+															}
+															onChange={() =>
+																handleCheckboxChange(
+																	"Embroidered"
+																)
+															}
+														/>
 													</div>
 												</div>
 											</div>
@@ -749,32 +848,98 @@ export default function ProductPage() {
 												<div className="flex flex-wrap">
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Center" />
+															<CheckBox
+																labelKey="Center"
+																checked={
+																	customizePolos ===
+																	"Center"
+																}
+																onChange={() =>
+																	handleCustomizePolosChange(
+																		"Center"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Right Shoulder" />
+															<CheckBox
+																labelKey="Right Shoulder"
+																checked={
+																	customizePolos ===
+																	"Right Shoulder"
+																}
+																onChange={() =>
+																	handleCustomizePolosChange(
+																		"Right Shoulder"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Left Shoulder" />
+															<CheckBox
+																labelKey="Left Shoulder"
+																checked={
+																	customizePolos ===
+																	"Left Shoulder"
+																}
+																onChange={() =>
+																	handleCustomizePolosChange(
+																		"Left Shoulder"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Left Chest" />
+															<CheckBox
+																labelKey="Left Chest"
+																checked={
+																	customizePolos ===
+																	"Left Chest"
+																}
+																onChange={() =>
+																	handleCustomizePolosChange(
+																		"Left Chest"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Right Chest" />
+															<CheckBox
+																labelKey="Right Chest"
+																checked={
+																	customizePolos ===
+																	"Right Chest"
+																}
+																onChange={() =>
+																	handleCustomizePolosChange(
+																		"Right Chest"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Embroidered" />
+															<CheckBox
+																labelKey="Embroidered"
+																checked={
+																	customizePolos ===
+																	"Embroidered"
+																}
+																onChange={() =>
+																	handleCustomizePolosChange(
+																		"Embroidered"
+																	)
+																}
+															/>
 														</div>
 													</div>
 												</div>
@@ -787,32 +952,98 @@ export default function ProductPage() {
 												<div className="flex flex-wrap">
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Center" />
+															<CheckBox
+																labelKey="Center"
+																checked={
+																	customizeBasics ===
+																	"Center"
+																}
+																onChange={() =>
+																	handleCustomizeBasicsChange(
+																		"Center"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Right Shoulder" />
+															<CheckBox
+																labelKey="Right Shoulder"
+																checked={
+																	customizeBasics ===
+																	"Right Shoulder"
+																}
+																onChange={() =>
+																	handleCustomizeBasicsChange(
+																		"Right Shoulder"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Left Shoulder" />
+															<CheckBox
+																labelKey="Left Shoulder"
+																checked={
+																	customizeBasics ===
+																	"Left Shoulder"
+																}
+																onChange={() =>
+																	handleCustomizeBasicsChange(
+																		"Left Shoulder"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Left Chest" />
+															<CheckBox
+																labelKey="Left Chest"
+																checked={
+																	customizeBasics ===
+																	"Left Chest"
+																}
+																onChange={() =>
+																	handleCustomizeBasicsChange(
+																		"Left Chest"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Right Chest" />
+															<CheckBox
+																labelKey="Right Chest"
+																checked={
+																	customizeBasics ===
+																	"Right Chest"
+																}
+																onChange={() =>
+																	handleCustomizeBasicsChange(
+																		"Right Chest"
+																	)
+																}
+															/>
 														</div>
 													</div>
 													<div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 mb-4 sm:mb-0">
 														<div className="relative flex items-center">
-															<CheckBox labelKey="Embroidered" />
+															<CheckBox
+																labelKey="Embroidered"
+																checked={
+																	customizeBasics ===
+																	"Embroidered"
+																}
+																onChange={() =>
+																	handleCustomizeBasicsChange(
+																		"Embroidered"
+																	)
+																}
+															/>
 														</div>
 													</div>
 												</div>
@@ -895,7 +1126,7 @@ export default function ProductPage() {
 									!isSelected &&
 									"bg-gray-400 hover:bg-gray-400"
 								}`}
-								disabled={!isSelected}
+								disabled={!isOptionSelected}
 								loading={addToCartLoader}
 							>
 								<span className="py-2 3xl:px-8">
