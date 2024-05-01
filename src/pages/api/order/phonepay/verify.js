@@ -1,6 +1,5 @@
 import axios from 'axios';
 import connectToDatabase from '../../../../lib/mongodb';
-import e from 'cors';
 const crypto = require('crypto');
 
 connectToDatabase();
