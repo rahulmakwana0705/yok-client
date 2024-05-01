@@ -18,7 +18,6 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
             const { totalPrice, firstName } = req.body;
-            console.log(totalPrice, firstName)
 
             // Call the PhonePe API to initiate payment
             const phonePeResponse = await initiatePhonePePayment(firstName, totalPrice);
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
             res.status(200).json({ message: 'Payment initiated successfully', res: phonePeResponse });
 
         } catch (error) {
-            console.error('Error creating payment:', error);
+            console.error('Error creating payment:', error.message);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
@@ -50,13 +49,14 @@ export default async function handler(req, res) {
 // Function to make a request to PhonePe API
 async function initiatePhonePePayment(username, amount) {
     try {
+        console.log(username, amount)
         // Construct the payload
         const payload = {
             "merchantId": "PGTESTPAYUAT",
             "merchantTransactionId": generateID(),
             "merchantUserId": "MUID123",
-            "amount": amount * 100,
-            "name": username,
+            "amount": 10000,
+            "name": "username",
             "redirectUrl": "http://localhost:3000/api/order/phonepay/verify",
             "redirectMode": "POST",
             "callbackUrl": "http://localhost:3000/api/order/phonepay/verify",
@@ -65,7 +65,6 @@ async function initiatePhonePePayment(username, amount) {
                 "type": "PAY_PAGE"
             }
         }
-
 
         // Convert payload to Base64 encoded string
         const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
@@ -77,10 +76,19 @@ async function initiatePhonePePayment(username, amount) {
         const sha256 = crypto.createHash('sha256').update(string).digest('hex')
         const checksum = sha256 + '###' + saltIndex
 
-        // const xVerify = await calculateXVerify(base64Payload, saltKey, saltIndex);
-        // const xVerify = await calculateXVerify(base64Payload, saltKey, saltIndex);
+        // Make the API request with retry logic
+        const response = await makeRequestWithRetry(base64Payload, checksum);
 
+        // Return the response from PhonePe API
+        return response.data;
+    } catch (error) {
+        console.error('Error initiating PhonePe payment:', error.message);
+        throw error;
+    }
+}
 
+async function makeRequestWithRetry(base64Payload, checksum, retryCount = 0) {
+    try {
         // Make the API request
         const response = await axios.post('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay', {
             request: base64Payload
@@ -92,10 +100,26 @@ async function initiatePhonePePayment(username, amount) {
             }
         });
 
-        // Return the response from PhonePe API
-        return response.data;
+        // Return the response if successful
+        return response;
     } catch (error) {
-        console.error('Error initiating PhonePe payment:', error);
-        throw error;
+        if (error.response && error.response.status === 429) {
+            // If rate limited, check for Retry-After header
+            const retryAfter = error.response.headers['retry-after'];
+            if (retryAfter) {
+                const waitTime = parseInt(retryAfter) * 1000; // Convert to milliseconds
+                await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+                // If no Retry-After header, use exponential backoff
+                const retryDelay = Math.pow(2, retryCount) * 1000;
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+            }
+
+            // Retry the request with incremented retry count
+            return makeRequestWithRetry(base64Payload, checksum, retryCount + 1);
+        } else {
+            // If not rate limited or other error, throw the error
+            throw error;
+        }
     }
 }

@@ -1,11 +1,15 @@
 
 import Razorpay from 'razorpay';
-import RazorpayKeys from '../models/RazorpayKeys';
+import PaymentGatewayKeys from '../models/PaymentGatewayKeys';
 
 async function getActiveRazorpayKeys() {
     try {
-        const activeKeys = await RazorpayKeys.findOne({ isActive: true });
-        return activeKeys;
+        const activeKeys = await PaymentGatewayKeys.findOne();
+        if (activeKeys.activeGateway === 'razorpay') {
+            return activeKeys.razorpay;
+        } else {
+            return null
+        }
     } catch (error) {
         console.error('Error fetching active Razorpay keys:', error);
         throw new Error('Internal Server Error');

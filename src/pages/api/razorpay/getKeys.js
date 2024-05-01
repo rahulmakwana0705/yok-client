@@ -1,7 +1,6 @@
 // api/razorpay-keys/get-active.js
 
 import connectToDatabase from "../../../lib/mongodb";
-import RazorpayKeys from "../../../models/RazorpayKeys";
 import { getRazorpayInstance } from "../../../lib/razorPay-config";
 
 connectToDatabase();

@@ -55,7 +55,7 @@ try {
         },
         status: {
             type: String,
-            enum: ['pending', 'processing', 'shipped', 'delivered'],
+            enum: ['pending', 'processing', 'shipped', 'delivered', 'paid'],
             default: 'pending'
         },
         paymentMethod: {

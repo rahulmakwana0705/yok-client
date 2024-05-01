@@ -2,10 +2,8 @@ import Input from "@components/ui/input";
 import { useForm } from "react-hook-form";
 import TextArea from "@components/ui/text-area";
 import { useCheckoutMutation } from "@framework/checkout/use-checkout";
-import { CheckBox } from "@components/ui/checkbox";
 import Button from "@components/ui/button";
 import Router from "next/router";
-import { ROUTES } from "@utils/routes";
 import { useTranslation } from "next-i18next";
 import http from "@framework/utils/http";
 import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
@@ -28,6 +26,7 @@ interface CheckoutInputType {
 	response: object;
 }
 
+
 let currentUserData;
 const authToken = Cookies.get("token");
 if (authToken) {
@@ -37,6 +36,23 @@ const CheckoutForm: React.FC = () => {
 	const { t } = useTranslation();
 	const [selectedOption, setSelectedOption] = useState<string>("online");
 	const { mutate: updateUser, isPending } = useCheckoutMutation();
+	const [activeGateway, setActiveGateway] = useState<string>('');
+
+
+	useEffect(() => {
+		// Fetch active payment gateway when component mounts
+		fetchActiveGateway();
+	}, []);
+
+	const fetchActiveGateway = async () => {
+		try {
+			// Fetch active payment gateway from the API
+			const response = await http.get(API_ENDPOINTS.GET_ACTIVE_PAYMENT_GATEWAY);
+			setActiveGateway(response.data.activeGateway);
+		} catch (error) {
+			console.error('Error fetching active payment gateway:', error);
+		}
+	};
 	const {
 		register,
 		handleSubmit,
@@ -54,145 +70,247 @@ const CheckoutForm: React.FC = () => {
 		currencyCode: "USD",
 	});
 
-	// console.log("items at checkout items", items);
-	// console.log("items at checkout total", total);
-	// console.log("items at checkout subtotal", subtotal);
-	// console.log("items at checkout isEmpty", isEmpty);
+
+	// async function onSubmit1(input: CheckoutInputType) {
+	// 	const allProduct = items.map((product) => ({
+	// 		product: product._id,
+	// 		quantity: product?.quantity || 0,
+	// 	}));
+	// 	const inputData: CheckoutInputType = {
+	// 		...input,
+	// 		paymentMethod: selectedOption,
+	// 	};
+	// 	if (selectedOption === "online") {
+	// 	} else if (selectedOption === "cod") {
+	// 	}
+	// 	const { data: razorpayKeys } = await http.get(
+	// 		API_ENDPOINTS.GET_RAZORPAYKEYS
+	// 	);
+	// 	inputData.totalPrice = discountedAmount;
+	// 	const { data } = await http.post(
+	// 		API_ENDPOINTS.CREATE_ORDER_PHONEPAY_PAYMENT,
+	// 		inputData
+	// 	);
+	// 	console.log(data.res.success);
+	// 	if (data.res.success) {
+	// 		console.log(data.res.data.instrumentResponse.redirectInfo.url);
+	// 		Router.push(data.res.data.instrumentResponse.redirectInfo.url);
+	// 		return;
+	// 	}
+	// 	if (selectedOption === "online") {
+	// 		if (data.success) {
+	// 			var options = {
+	// 				key: razorpayKeys.keys.key,
+	// 				amount: data.order.amount,
+	// 				currency: "INR",
+	// 				name: "YOK",
+	// 				description: "Test Transaction",
+	// 				image: "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
+	// 				order_id: data.order.id,
+	// 				handler: function (response: any) {
+	// 					console.log(response);
+	// 					onPaymentSuccess({ input, response });
+	// 					// updateUser({ ...input, response });
+	// 				},
+	// 				prefill: {
+	// 					name: "John doe",
+	// 					email: "johndoe@gmail.com",
+	// 					contact: "9999999999",
+	// 				},
+	// 				notes: {
+	// 					test: "This is test function",
+	// 				},
+	// 				theme: {
+	// 					color: "#3399cc",
+	// 				},
+	// 			};
+	// 			var rzp1 = new window.Razorpay(options);
+	// 			rzp1.open();
+	// 			rzp1.on("payment.failed", function (response: any) {
+	// 				alert(response.error.code);
+	// 				alert(response.error.description);
+	// 				alert(response.error.source);
+	// 				alert(response.error.step);
+	// 				alert(response.error.reason);
+	// 				alert(response.error.metadata.order_id);
+	// 				alert(response.error.metadata.payment_id);
+	// 			});
+	// 		}
+	// 	}
+	// 	// if (!isEmpty) {
+	// 	//   console.log("updateUser", updateUser);
+	// 	//   console.log("Test payment button clicked!");
+	// 	//   const { data: razorpayKeys } = await http.get(
+	// 	//     API_ENDPOINTS.GET_RAZORPAYKEYS
+	// 	//   );
+	// 	//   const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER_PAYMENT, {
+	// 	//     user: userData?._id,
+	// 	//     products: allProduct,
+	// 	//     totalPrice: total,
+	// 	//     tracking_number: 0,
+	// 	//     shippingAddress: input,
+	// 	//     status: "pending",
+	// 	//     paymentMethod: selectedOption,
+	// 	//     paymentStatus: "pending",
+	// 	//     transactionId: "",
+	// 	//   });
+	// 	//   console.log(data);
+	// 	//   if (data.success) {
+	// 	//     var options = {
+	// 	//       key: razorpayKeys.keys.key,
+	// 	//       amount: "50000",
+	// 	//       currency: "INR",
+	// 	//       name: "YOK",
+	// 	//       description: "Test Transaction",
+	// 	//       image:
+	// 	//         "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
+	// 	//       order_id: data.order.id,
+	// 	//       handler: function (response: any) {
+	// 	//         console.log(response);
+	// 	//         updateUser({ ...input, response });
+	// 	//       },
+	// 	//       prefill: {
+	// 	//         name: "John doe",
+	// 	//         email: "johndoe@gmail.com",
+	// 	//         contact: "9999999999",
+	// 	//       },
+	// 	//       notes: {
+	// 	//         test: "This is test function",
+	// 	//       },
+	// 	//       theme: {
+	// 	//         color: "#3399cc",
+	// 	//       },
+	// 	//     };
+	// 	//     var rzp1 = new window.Razorpay(options);
+	// 	//     rzp1.open();
+	// 	//     rzp1.on("payment.failed", function (response: any) {
+	// 	//       alert(response.error.code);
+	// 	//       alert(response.error.description);
+	// 	//       alert(response.error.source);
+	// 	//       alert(response.error.step);
+	// 	//       alert(response.error.reason);
+	// 	//       alert(response.error.metadata.order_id);
+	// 	//       alert(response.error.metadata.payment_id);
+	// 	//     });
+	// 	//   }
+	// 	//   updateUser(input);
+	// 	// }
+
+	// 	// Router.push(ROUTES.ORDER);
+	// }
+
+
 
 	async function onSubmit(input: CheckoutInputType) {
-		const allProduct = items.map((product) => ({
-			product: product._id,
-			quantity: product?.quantity || 0,
-		}));
-		const inputData: CheckoutInputType = {
-			...input,
-			paymentMethod: selectedOption,
-		};
-		if (selectedOption === "online") {
-		} else if (selectedOption === "cod") {
-		}
-		console.log(updateUser);
-		console.log("Test payment button clicked!");
-		const { data: razorpayKeys } = await http.get(
-			API_ENDPOINTS.GET_RAZORPAYKEYS
-		);
-		inputData.totalPrice = discountedAmount;
-		const { data } = await http.post(
-			API_ENDPOINTS.CREATE_ORDER_PAYMENT,
-			inputData
-		);
-		console.log(data.res.success);
-		if (data.res.success) {
-			console.log(data.res.data.instrumentResponse.redirectInfo.url);
-			Router.push(data.res.data.instrumentResponse.redirectInfo.url);
-			return;
-		}
-		if (selectedOption === "online") {
-			if (data.success) {
-				var options = {
-					key: razorpayKeys.keys.key,
-					amount: data.order.amount,
-					currency: "INR",
-					name: "YOK",
-					description: "Test Transaction",
-					image: "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
-					order_id: data.order.id,
-					handler: function (response: any) {
-						console.log(response);
-						onPaymentSuccess({ input, response });
-						// updateUser({ ...input, response });
-					},
-					prefill: {
-						name: "John doe",
-						email: "johndoe@gmail.com",
-						contact: "9999999999",
-					},
-					notes: {
-						test: "This is test function",
-					},
-					theme: {
-						color: "#3399cc",
-					},
-				};
-				var rzp1 = new window.Razorpay(options);
-				rzp1.open();
-				rzp1.on("payment.failed", function (response: any) {
-					alert(response.error.code);
-					alert(response.error.description);
-					alert(response.error.source);
-					alert(response.error.step);
-					alert(response.error.reason);
-					alert(response.error.metadata.order_id);
-					alert(response.error.metadata.payment_id);
-				});
-			}
-		}
-		// if (!isEmpty) {
-		//   console.log("updateUser", updateUser);
-		//   console.log("Test payment button clicked!");
-		//   const { data: razorpayKeys } = await http.get(
-		//     API_ENDPOINTS.GET_RAZORPAYKEYS
-		//   );
-		//   const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER_PAYMENT, {
-		//     user: userData?._id,
-		//     products: allProduct,
-		//     totalPrice: total,
-		//     tracking_number: 0,
-		//     shippingAddress: input,
-		//     status: "pending",
-		//     paymentMethod: selectedOption,
-		//     paymentStatus: "pending",
-		//     transactionId: "",
-		//   });
-		//   console.log(data);
-		//   if (data.success) {
-		//     var options = {
-		//       key: razorpayKeys.keys.key,
-		//       amount: "50000",
-		//       currency: "INR",
-		//       name: "YOK",
-		//       description: "Test Transaction",
-		//       image:
-		//         "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
-		//       order_id: data.order.id,
-		//       handler: function (response: any) {
-		//         console.log(response);
-		//         updateUser({ ...input, response });
-		//       },
-		//       prefill: {
-		//         name: "John doe",
-		//         email: "johndoe@gmail.com",
-		//         contact: "9999999999",
-		//       },
-		//       notes: {
-		//         test: "This is test function",
-		//       },
-		//       theme: {
-		//         color: "#3399cc",
-		//       },
-		//     };
-		//     var rzp1 = new window.Razorpay(options);
-		//     rzp1.open();
-		//     rzp1.on("payment.failed", function (response: any) {
-		//       alert(response.error.code);
-		//       alert(response.error.description);
-		//       alert(response.error.source);
-		//       alert(response.error.step);
-		//       alert(response.error.reason);
-		//       alert(response.error.metadata.order_id);
-		//       alert(response.error.metadata.payment_id);
-		//     });
-		//   }
-		//   updateUser(input);
-		// }
+		try {
+			const inputData: CheckoutInputType = {
+				...input,
+				paymentMethod: selectedOption,
+				totalPrice: discountedAmount,
+			};
 
-		// Router.push(ROUTES.ORDER);
+			console.log("inputData", inputData);
+
+
+			// Step 1: Create Order
+			const allProduct = items.map((product) => ({
+				product: product._id,
+				quantity: product?.quantity || 0,
+			}));
+			const orderData = {
+				user: currentUserData?._id,
+				products: allProduct,
+				totalPrice: discountedAmount,
+				tracking_number: 0,
+				shippingAddress: input,
+				status: "pending",
+				paymentMethod: selectedOption,
+				paymentStatus: "pending",
+				transactionId: "",
+			};
+			const { data: orderResponse } = await http.post(API_ENDPOINTS.CREATE_ORDER, orderData);
+			console.log("Order created:", orderResponse);
+
+			// Step 2: Make Payment
+			if (selectedOption === "online") {
+				if (activeGateway === "phonepe") {
+					// Make phonepe payment
+					console.log("Making phonepe payment...");
+					inputData.totalPrice = discountedAmount;
+					const { data } = await http.post(
+						API_ENDPOINTS.CREATE_ORDER_PHONEPAY_PAYMENT,
+						inputData
+					);
+					console.log(data.res.success);
+					await updateOrderStatus(orderResponse._id);
+					if (data.res.success) {
+						console.log(data.res.data.instrumentResponse.redirectInfo.url);
+						Router.push(data.res.data.instrumentResponse.redirectInfo.url);
+						return;
+					}
+				} else if (activeGateway === "razorpay") {
+
+					const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER_PAYMENT, inputData);
+					const { data: razorpayKeys } = await http.get(
+						API_ENDPOINTS.GET_RAZORPAYKEYS
+					);
+					console.log(data);
+
+					var options = {
+						key: razorpayKeys.keys.key,
+						amount: data.order.amount,
+						currency: "INR",
+						name: "YOK",
+						description: "Test Transaction",
+						image: "http://localhost:3000/_next/image?url=%2Fassets%2Fimages%2Flogo.png&w=96&q=75",
+						order_id: data.order.id,
+						handler: function (response: any) {
+							console.log(response);
+							onPaymentSuccess({ input, response });
+							updateOrderStatus(orderResponse._id);
+
+						},
+						prefill: {
+							name: `${inputData.firstName} ${inputData.lastName}`,
+							email: inputData.email,
+							contact: inputData.phone,
+						},
+						notes: {
+							test: "This is test function",
+						},
+						theme: {
+							color: "#3399cc",
+						},
+					};
+					var rzp1 = new window.Razorpay(options);
+					rzp1.open();
+					rzp1.on("payment.failed", function (response: any) {
+						alert(response.error.code);
+						alert(response.error.description);
+						alert(response.error.source);
+						alert(response.error.step);
+						alert(response.error.reason);
+						alert(response.error.metadata.order_id);
+						alert(response.error.metadata.payment_id);
+					});
+
+					// Make razorpay payment
+					console.log("Making razorpay payment...");
+				}
+			} else if (selectedOption === "cod") {
+				console.log("Order placed with Cash on Delivery.");
+			}
+		} catch (error) {
+			console.error("Error processing order:", error);
+		}
 	}
+
 	async function onPaymentSuccess(response: CheckoutInputType) {
 		console.log(response);
 		const { response: PaymentVerification, input: userData } = response;
 
 		// verify this payment
+
 		const { data } = await http.post(
 			API_ENDPOINTS.VERIFY_ORDER_PAYMENT,
 			PaymentVerification
@@ -202,25 +320,25 @@ const CheckoutForm: React.FC = () => {
 			// save order in db
 			console.log(userData);
 
-			const allProduct = items.map((product) => ({
-				product: product._id,
-				quantity: product?.quantity || 0,
-			}));
+			// const allProduct = items.map((product) => ({
+			// 	product: product._id,
+			// 	quantity: product?.quantity || 0,
+			// }));
 
-			const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {
-				user: currentUserData?._id,
-				products: allProduct,
-				totalPrice: subtotal,
-				tracking_number: 0,
-				userData: userData,
-				status: "pending",
-				paymentMethod: selectedOption,
-				paymentStatus: "pending",
-				transactionId: PaymentVerification.razorpay_payment_id,
-			});
+			// const { data } = await http.post(API_ENDPOINTS.CREATE_ORDER, {
+			// 	user: currentUserData?._id,
+			// 	products: allProduct,
+			// 	totalPrice: subtotal,
+			// 	tracking_number: 0,
+			// 	userData: userData,
+			// 	status: "pending",
+			// 	paymentMethod: selectedOption,
+			// 	paymentStatus: "pending",
+			// 	transactionId: PaymentVerification.razorpay_payment_id,
+			// });
 		}
-		console.log(data);
-		alert("order created");
+		// console.log(data);
+		// alert("order created");
 		// Router.push(ROUTES.ORDER);
 	}
 	// New Function to Handle Test Payment
@@ -241,6 +359,17 @@ const CheckoutForm: React.FC = () => {
 		setSelectedOption(value);
 		localStorage.setItem("selectedPaymentOption", value);
 	};
+
+	async function updateOrderStatus(orderId: string) {
+		try {
+			// Make API call to update order status
+			const response = await http.get(`${API_ENDPOINTS.UPDATE_ORDER}?id=${orderId}`);
+			console.log("Order status updated:", response.data);
+
+		} catch (error) {
+			console.error("Error updating order status:", error);
+		}
+	}
 
 	return (
 		<>
