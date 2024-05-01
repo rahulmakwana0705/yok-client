@@ -8,7 +8,6 @@ export default async function handler(req, res) {
         try {
             let orders;
             if (req.query.orderid) {
-                // If orderid is provided in the query parameter, fetch the order by orderid
                 const order = await Order.findOne({ _id: req.query.orderid });
                 if (!order) {
                     return res.status(404).json({ error: 'Order not found' });
@@ -18,10 +17,8 @@ export default async function handler(req, res) {
                     order,
                 });
             } else if (req.query.userid) {
-                // If userid is provided in the query parameter, filter orders by userid
                 orders = await Order.find({ user: req.query.userid });
             } else {
-                // If neither orderid nor userid is provided, return all orders
                 orders = await Order.find({});
             }
             res.status(200).json({
