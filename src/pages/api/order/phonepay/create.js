@@ -1,7 +1,7 @@
-import fetch from 'node-fetch';
+import axios from 'axios';
 import Order from '../../../../models/Order';
 import connectToDatabase from '../../../../lib/mongodb';
-const crypto = require('crypto');
+const crypto = require('crypto')
 
 connectToDatabase();
 
@@ -9,16 +9,16 @@ const generateID = () => {
     const timestamp = Date.now();
     const randomNum = Math.floor(Math.random() * 100000);
     const MPrefix = "T";
-    const transactionID = `${MPrefix}${timestamp}${randomNum}`;
-    console.log(transactionID);
-    return transactionID;
-};
+    const transactionID = `${MPrefix}${timestamp}${randomNum}`
+    console.log(transactionID)
+    return transactionID
+}
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
             const { totalPrice, firstName } = req.body;
-            console.log(totalPrice, firstName);
+            console.log(totalPrice, firstName)
 
             // Call the PhonePe API to initiate payment
             const phonePeResponse = await initiatePhonePePayment(firstName, totalPrice);
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     }
 }
 
-// Function to make a request to PhonePe API without axios
+// Function to make a request to PhonePe API
 async function initiatePhonePePayment(username, amount) {
     try {
         // Construct the payload
@@ -64,7 +64,8 @@ async function initiatePhonePePayment(username, amount) {
             "paymentInstrument": {
                 "type": "PAY_PAGE"
             }
-        };
+        }
+
 
         // Convert payload to Base64 encoded string
         const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
@@ -73,25 +74,26 @@ async function initiatePhonePePayment(username, amount) {
         const saltKey = '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399';
         const saltIndex = 1;
         const string = base64Payload + '/pg/v1/pay' + saltKey;
-        const sha256 = crypto.createHash('sha256').update(string).digest('hex');
-        const checksum = sha256 + '###' + saltIndex;
+        const sha256 = crypto.createHash('sha256').update(string).digest('hex')
+        const checksum = sha256 + '###' + saltIndex
 
-        // Make the API request using node-fetch
-        const response = await fetch('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay', {
-            method: 'POST',
+        // const xVerify = await calculateXVerify(base64Payload, saltKey, saltIndex);
+        // const xVerify = await calculateXVerify(base64Payload, saltKey, saltIndex);
+
+
+        // Make the API request
+        const response = await axios.post('https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay', {
+            request: base64Payload
+        }, {
             headers: {
-                'Accept': 'application/json',
+                accept: 'application/json',
                 'Content-Type': 'application/json',
                 'X-VERIFY': checksum
-            },
-            body: JSON.stringify({ request: base64Payload })
+            }
         });
 
-        // Parse response JSON
-        const responseData = await response.json();
-
         // Return the response from PhonePe API
-        return responseData;
+        return response.data;
     } catch (error) {
         console.error('Error initiating PhonePe payment:', error);
         throw error;
