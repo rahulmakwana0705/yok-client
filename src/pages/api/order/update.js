@@ -17,7 +17,7 @@ export default async function handler(req, res) {
                 return res.status(404).json({ error: 'Order not found' });
             }
 
-            order.paymentStatus = "paid";
+            order.paymentStatus = "completed";
             await order.save();
 
             res.status(200).json({ success: true, order });
